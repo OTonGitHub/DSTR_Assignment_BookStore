@@ -20,6 +20,7 @@ int main()
 //Functions
 void mainMenu()
 {
+    cout << "GITHUB BRANCH CHECK";
     system("CLS");
     int choice;
     cout << "__WELCOME TO BOOK-O-MATRIX__" << endl;
@@ -147,11 +148,6 @@ void sortProduct()
 void deleteProduct()
 {
 }
-
-
-
-
-
 
 // ::: TRANSACTION MENU :::
 void printTransactionMenu()
