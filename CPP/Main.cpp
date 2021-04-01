@@ -21,6 +21,7 @@ int main()
 void mainMenu()
 {
     cout << "GITHUB BRANCH CHECK";
+    cout << "Push to Main Branch";
     system("CLS");
     int choice;
     cout << "__WELCOME TO BOOK-O-MATRIX__" << endl;
