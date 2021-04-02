@@ -23,6 +23,7 @@ void mainMenu()
     cout << "GITHUB BRANCH CHECK";
     cout << "Push to Main Branch";
     cout << "Start Day _ 2";
+    cout << " ";
     system("CLS");
     int choice;
     cout << "__WELCOME TO BOOK-O-MATRIX__" << endl;
