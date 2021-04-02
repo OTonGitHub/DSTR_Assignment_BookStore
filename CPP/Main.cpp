@@ -20,10 +20,6 @@ int main()
 //Functions
 void mainMenu()
 {
-    cout << "GITHUB BRANCH CHECK";
-    cout << "Push to Main Branch";
-    cout << "Start Day _ 2";
-    cout << " ";
     system("CLS");
     int choice;
     cout << "__WELCOME TO BOOK-O-MATRIX__" << endl;
@@ -39,6 +35,9 @@ void mainMenu()
         case 7:
             mainMenu();
             break;
+        
+        case 0:
+        exit(3);
 
         default:
             break;
@@ -51,6 +50,9 @@ void mainMenu()
         case 5:
             mainMenu();
             break;
+        case 0:
+        exit(3);
+
 
         default:
             break;
