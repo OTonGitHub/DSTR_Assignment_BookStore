@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <windows.h>
+#include <fstream>
 
 using namespace std;
 
@@ -41,7 +42,7 @@ public:
         cout << "Menu Class Object Created Successfully..\n";
         Sleep(1450);
     }
-    
+
     int menuValidation(int maxValue, int menu)
     {
         {
@@ -87,6 +88,7 @@ int main()
     {
         int choice = 0;
         boolean isValid;
+        
         do
         {
             isValid = true;
