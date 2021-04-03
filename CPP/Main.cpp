@@ -3,11 +3,14 @@
 #include <string>
 #include <windows.h>
 #include <fstream>
+#include <vector>
+#include <string>
 
 using namespace std;
 
 //Prototypes
 
+//Classes
 class MenuClass
 {
 
@@ -82,13 +85,83 @@ public:
 
 int main()
 {
+    system("CLS");
+    std::ofstream dbFile;
+    boolean isValid;
+
+    string yn;
+
+    int chances = 4;
+    do
+    {
+
+        isValid = true;
+        cout << "Would you Like to Open Default DATABASE ? [y/N]...  ";
+        cin >> yn;
+        //getline(cin,yn); cin.ignore();
+
+        if (yn != "Y" && yn != "y" && yn != "N" && yn != "n")
+        {
+            isValid = false;
+            if (chances < 2)
+            {
+                cout << "INVALID FILE NAME AFTER 3 TRIES, PROGRAM WILL EXIT NOW..";
+                exit(3);
+            }
+            cout << "\nINVALID INPUT, USE : 'Y', 'y', 'N', 'n'" << endl;
+            chances--;
+            cout << "PROGRAM WILL EXIT AFTER [" << chances << "] TRIES !";
+            Sleep(3000);
+            
+        }
+        system("CLS");
+    } while (isValid == false);
+
+    if (yn == "Y" || yn == "y")
+    {
+        dbFile.open("dbFile.txt", std::ios::app);
+    }
+    else
+    {
+        string dbFileName;
+        cout << "Enter DATABASE File Name [w/out .txt] : ";
+        cin >> dbFileName;
+        Sleep(1250);
+        system("CLS");
+        dbFile.open((dbFileName+".txt"), std::ios::app);
+    }
+
+    if (dbFile.is_open())
+    {
+        cout << "Connected to DATABSE File Successfully.." << endl;
+        Sleep(1450);
+        system("CLS");
+    }
+    else
+    {
+        cout << "ERROR :: Unable to Connect to DATABASE";
+        Sleep(3000);
+        system("CLS");
+    }
+
+    dbFile << "DATABASE FILE GENERATED" << endl;
+
+    vector<string> names;
+    names.push_back("OT");
+    names.push_back("Allan");
+
+    for (string name : names)
+    {
+        dbFile << name << endl;
+    }
+
     MenuClass mainObj;
+    //boolean isValid;
 
     while (true)
     {
         int choice = 0;
-        boolean isValid;
-        
+
         do
         {
             isValid = true;
@@ -140,6 +213,8 @@ int main()
             }
         }
     }
+
+    dbFile.close();
     return 0;
 }
 
