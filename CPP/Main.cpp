@@ -147,9 +147,27 @@ int main()
         system("CLS");
     }
 
-    //TEST OUTSTREAM
-    out_dbFile << "DATABASE MANAGEMENT" << endl;
+    //TEST OUTSTREAM                                                   ::: PASSED :::
+    //out_dbFile << "DATABASE MANAGEMENT" << endl;
     out_dbFile.close();
+
+    in_dbFile.open((dbFileName + ".txt"), std::ios::app); //RECIEVING ID FROM LIST
+    string fileItem;
+    while (getline(in_dbFile, fileItem))
+    {
+        string stringLine = fileItem; //BUG
+        char charLine[100];           //stringLine.length() inside charLine[] not required, DynamicAlloc                    //BUG
+        strcpy(charLine, stringLine.c_str());
+        int readID = atoi(charLine); //BUG
+        if (readID >= 0 || readID <= 100)
+        { //BUG
+            /*cout << endl
+                 << readID << endl;
+            _getch();*/ //TESTING, NOT REQUIRED
+            item_ID = readID; //BUG
+        }
+    }
+    in_dbFile.close();
 
     MenuClass mainObj;
     //boolean isValid;
@@ -196,7 +214,6 @@ int main()
                     cout << "__ADDING NEW ITEM__" << endl;
 
                     cout << "\nID : " << item_ID << endl;
-                    item_ID++;
                     cout << "NAME : ";
                     cin.ignore();
                     getline(cin, name);
@@ -206,7 +223,7 @@ int main()
                     getline(cin, category);
                     //cin.ignore();
 
-                    id_string = to_string(id);
+                    id_string = to_string(item_ID);
                     bookDataVector.push_back(id_string);
                     bookDataVector.push_back(name);
                     bookDataVector.push_back(author);
@@ -221,6 +238,7 @@ int main()
                     out_dbFile.close(); //IMPORTANT
                                         //TEST OUTSTEAM
 
+                    item_ID++;
                     cout << "\n\nUpdating DATABASE...";
                     Sleep(1450);
                     system("CLS");
@@ -232,7 +250,7 @@ int main()
                     cout << "READING FROM " << dbFileName << "..." << endl;
                     Sleep(1250);
                     in_dbFile.open(dbFileName + ".txt");
-                    string fileItem;
+                    string fileItem; //REPITITIVE MUTABLE STRING ?? MOVE OUT OF SWITCH CASE INTO WHILE(TRUE) TO MAKE GLOBALLY AVAIABLE INSIDE SWITCH CASE
 
                     /*getline(in_dbFile, fileItem); //DID NOT READ ENTIRE LINE !
                 while (!in_dbFile.eof())
