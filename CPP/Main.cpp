@@ -159,13 +159,13 @@ int main()
         char charLine[100];           //stringLine.length() inside charLine[] not required, DynamicAlloc                    //BUG
         strcpy(charLine, stringLine.c_str());
         int readID = atoi(charLine); //BUG
-        if (readID >= 0 || readID <= 100)
-        { //BUG
+        //if (readID >= 0 || readID <= 100)
+        //{ //BUG
             /*cout << endl
                  << readID << endl;
             _getch();*/ //TESTING, NOT REQUIRED
             item_ID = readID; //BUG
-        }
+        //}
     }
     in_dbFile.close();
 
@@ -201,7 +201,8 @@ int main()
         {
             while (true)
             {
-                switch (mainObj.menuValidation(7, 1))
+                int choice = mainObj.menuValidation(7, 1);
+                switch (choice)
                 {
 
                 case 1:
@@ -216,7 +217,7 @@ int main()
                     cout << "\nID : " << item_ID << endl;
                     cout << "NAME : ";
                     cin.ignore();
-                    getline(cin, name);
+                    getline(cin, name);    
                     cout << "AUTHOR NAME : ";
                     getline(cin, author);
                     cout << "CATEGORY : ";
@@ -282,13 +283,17 @@ int main()
                 default:
                     break;
                 }
+                if(choice == 7){
+                    break;
+                }
             }
         }
         else
         {
             while (true)
-            {
-                switch (mainObj.menuValidation(5, 2))
+            {   
+                int choice = mainObj.menuValidation(5, 2);
+                switch (choice)
                 {
                 case 5:
                     //Repeat
@@ -297,6 +302,9 @@ int main()
                     exit(3);
 
                 default:
+                    break;
+                }
+                if(choice == 5){
                     break;
                 }
             }
