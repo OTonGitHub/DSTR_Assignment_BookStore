@@ -5,6 +5,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <conio.h>
 
 using namespace std;
 
@@ -86,10 +87,13 @@ public:
 int main()
 {
     system("CLS");
-    std::ofstream dbFile;
+    std::ofstream out_dbFile;
+    std::ifstream in_dbFile;
     boolean isValid;
 
+    string dbFileName;
     string yn;
+    int item_ID = 0;
 
     int chances = 4;
     do
@@ -112,26 +116,25 @@ int main()
             chances--;
             cout << "PROGRAM WILL EXIT AFTER [" << chances << "] TRIES !";
             Sleep(3000);
-            
         }
         system("CLS");
     } while (isValid == false);
 
     if (yn == "Y" || yn == "y")
     {
-        dbFile.open("dbFile.txt", std::ios::app);
+        dbFileName = "dbFile";
+        out_dbFile.open((dbFileName + ".txt"), std::ios::app);
     }
     else
     {
-        string dbFileName;
         cout << "Enter DATABASE File Name [w/out .txt] : ";
         cin >> dbFileName;
         Sleep(1250);
         system("CLS");
-        dbFile.open((dbFileName+".txt"), std::ios::app);
+        out_dbFile.open((dbFileName + ".txt"), std::ios::app);
     }
 
-    if (dbFile.is_open())
+    if (out_dbFile.is_open())
     {
         cout << "Connected to DATABSE File Successfully.." << endl;
         Sleep(1450);
@@ -139,21 +142,14 @@ int main()
     }
     else
     {
-        cout << "ERROR :: Unable to Connect to DATABASE";
+        cerr << "ERROR :: Unable to Connect to DATABASE"; //CERR USED INSTEAD OF COUT
         Sleep(3000);
         system("CLS");
     }
 
-    dbFile << "DATABASE FILE GENERATED" << endl;
-
-    vector<string> names;
-    names.push_back("OT");
-    names.push_back("Allan");
-
-    for (string name : names)
-    {
-        dbFile << name << endl;
-    }
+    //TEST OUTSTREAM
+    out_dbFile << "DATABASE MANAGEMENT" << endl;
+    out_dbFile.close();
 
     MenuClass mainObj;
     //boolean isValid;
@@ -185,36 +181,110 @@ int main()
 
         if (choice == 1)
         {
-            switch (mainObj.menuValidation(7, 1))
+            while (true)
             {
-            case 7:
-                //Repeat
-                break;
+                switch (mainObj.menuValidation(7, 1))
+                {
 
-            case 0:
-                exit(3);
+                case 1:
+                {
+                    out_dbFile.open((dbFileName + ".txt"), std::ios::app);
+                    vector<string> bookDataVector; // ::: REMINDER ::: STUDY VECTORS
+                    system("CLS");
+                    int id;
+                    string id_string, name, author, category;
+                    cout << "__ADDING NEW ITEM__" << endl;
 
-            default:
-                break;
+                    cout << "\nID : " << item_ID << endl;
+                    item_ID++;
+                    cout << "NAME : ";
+                    cin.ignore();
+                    getline(cin, name);
+                    cout << "AUTHOR NAME : ";
+                    getline(cin, author);
+                    cout << "CATEGORY : ";
+                    getline(cin, category);
+                    //cin.ignore();
+
+                    id_string = to_string(id);
+                    bookDataVector.push_back(id_string);
+                    bookDataVector.push_back(name);
+                    bookDataVector.push_back(author);
+                    bookDataVector.push_back(category);
+
+                    //out_dbFile << to_string(id) << endl; //CAN'T PLACE INT TYPE IN VECTOR<STRING>
+                    for (string item : bookDataVector)
+                    {
+                        out_dbFile << item << endl;
+                    }
+                    out_dbFile << endl;
+                    out_dbFile.close(); //IMPORTANT
+                                        //TEST OUTSTEAM
+
+                    cout << "\n\nUpdating DATABASE...";
+                    Sleep(1450);
+                    system("CLS");
+                    break;
+                }
+                case 2:
+                {
+                    system("CLS");
+                    cout << "READING FROM " << dbFileName << "..." << endl;
+                    Sleep(1250);
+                    in_dbFile.open(dbFileName + ".txt");
+                    string fileItem;
+
+                    /*getline(in_dbFile, fileItem); //DID NOT READ ENTIRE LINE !
+                while (!in_dbFile.eof())
+                {
+                    cout << fileItem << endl; //SPITS OUT
+                    in_dbFile >> fileItem;    //STRANGE BEHAVIOUR ::: CHECK WITH DEBUGGER //WARNING ::::::: MUTABLE TYPE (STRING) OVERWRITTEN ?
+                }*/
+
+                    unsigned int lineNumber = 0; //unsigned = positive int
+                    while (getline(in_dbFile, fileItem))
+                    {
+                        cout << "[" << lineNumber << "] " << fileItem << endl;
+                        lineNumber++;
+                    }
+
+                    in_dbFile.close(); //IMPORTANT
+                    cout << "\nEnter any Key to Continue..";
+                    _getch();
+                    system("CLS");
+                    break;
+                }
+                case 7:
+                    //Repeat
+                    break;
+
+                case 0:
+                    exit(3);
+
+                default:
+                    break;
+                }
             }
         }
         else
         {
-            switch (mainObj.menuValidation(5, 2))
+            while (true)
             {
-            case 5:
-                //Repeat
-                break;
-            case 0:
-                exit(3);
+                switch (mainObj.menuValidation(5, 2))
+                {
+                case 5:
+                    //Repeat
+                    break;
+                case 0:
+                    exit(3);
 
-            default:
-                break;
+                default:
+                    break;
+                }
             }
         }
     }
 
-    dbFile.close();
     return 0;
 }
 
