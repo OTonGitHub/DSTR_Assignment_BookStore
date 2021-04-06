@@ -87,12 +87,13 @@ public:
 };
 class InventoryClass
 {
-    private:
+private:
     string dbFileName;
     int item_ID;
 
 public:
-    InventoryClass(string dbFileName, int item_ID){
+    InventoryClass(string dbFileName, int item_ID)
+    {
         this->dbFileName = dbFileName;
         this->item_ID = item_ID;
     }
@@ -103,7 +104,7 @@ public:
         system("CLS");
         out_dbFile.open((dbFileName + ".txt"), std::ios::app);
         int write_QTY;
-        string write_Name, write_Author, write_Category;
+        string write_Name, write_Author, write_Category, temp_str_write_QTY;
         item_ID++;
         cout << "ID : " << item_ID << endl;
         cin.ignore(); // <-- SUSPECTED CAUSE : _GETCH() FROM LINE:162
@@ -112,7 +113,20 @@ public:
         cout << "Author : ";
         getline(cin, write_Author);
         cout << "QTY : ";
-        cin >> write_QTY; //CRASHES ON NON-NUMERIC VALUE
+        // cin >> write_QTY; //CRASHES ON NON-NUMERIC VALUE ::: FIXING :::
+        while (getline(cin, temp_str_write_QTY))
+        {
+            stringstream getQTY(temp_str_write_QTY);
+            if (getQTY >> write_QTY)
+            {
+                if (getQTY.eof())
+                {
+                    break;
+                }
+            }
+            cout << "NON-NUMERIC INPUT DETECTED, TRY AGAIN...\n";
+            cout << "QTY : ";
+        }
         cout << "Category : ";
         cin.ignore();
         getline(cin, write_Category);
@@ -404,8 +418,8 @@ string read_dbFileName_item_ID()
     return return_dbFileName_item_ID;
 }
 
-void productSearch()
-{   
+void productSearch() //
+{
 }
 
 void categoryFilter()
