@@ -1,6 +1,4 @@
 //FT. FILESYSTEM  ::: ITERATION 3.0
-//THIS IS ALLAN
-//THIS IS OT
 #include <iostream>
 #include <string>
 #include <windows.h>
@@ -8,10 +6,14 @@
 #include <vector>
 #include <string>
 #include <conio.h>
+#include <sstream>
 
 using namespace std;
 
 //Prototypes
+string read_dbFileName_item_ID();
+void addProduct_CASE_1(string dbFileName, int item_ID);
+void displayProducts_CASE_2(string dbFileName);
 
 //Classes
 class MenuClass
@@ -83,96 +85,133 @@ public:
         }
     }
 };
+class InventoryClass
+{
+    private:
+    string dbFileName;
+    int item_ID;
+
+public:
+    InventoryClass(string dbFileName, int item_ID){
+        this->dbFileName = dbFileName;
+        this->item_ID = item_ID;
+    }
+
+    int addProduct_CASE_1(string dbFileName, int item_ID)
+    {
+        ofstream out_dbFile;
+        system("CLS");
+        out_dbFile.open((dbFileName + ".txt"), std::ios::app);
+        int write_QTY;
+        string write_Name, write_Author, write_Category;
+        item_ID++;
+        cout << "ID : " << item_ID << endl;
+        cin.ignore(); // <-- SUSPECTED CAUSE : _GETCH() FROM LINE:162
+        cout << "Name : ";
+        getline(cin, write_Name);
+        cout << "Author : ";
+        getline(cin, write_Author);
+        cout << "QTY : ";
+        cin >> write_QTY; //CRASHES ON NON-NUMERIC VALUE
+        cout << "Category : ";
+        cin.ignore();
+        getline(cin, write_Category);
+
+        vector<string> write_Line;
+
+        string str_write_ID;
+        str_write_ID = to_string(item_ID);
+
+        string str_write_QTY;
+        stringstream ss; // ^ CAN REFACTOR TO 2 LINES USING ABOVE METHOD ^
+        ss << write_QTY;
+        ss >> str_write_QTY;
+
+        write_Line.push_back(str_write_ID);
+        write_Line.push_back(write_Name);
+        write_Line.push_back(write_Author);
+        write_Line.push_back(str_write_QTY);
+        write_Line.push_back(write_Category);
+
+        int count = 1;
+        for (string line : write_Line)
+        {
+            if (count == 5)
+            {
+                out_dbFile << line << endl;
+            }
+            else
+            {
+                out_dbFile << line << ",";
+            }
+            count++;
+        }
+        out_dbFile.close();
+
+        cout << "\n\nUpdating DATABASE...";
+        Sleep(1450);
+        system("CLS");
+
+        return item_ID;
+    }
+
+    void displayProducts_CASE_2(string dbFileName)
+    {
+        system("CLS");
+        ifstream in_dbFile;
+        in_dbFile.open((dbFileName + ".txt"), std::ios::app); //PRINTING ENTIRE FILE
+        int read_ID, read_QTY;
+        string str_read_ID, read_Name, read_Author, str_read_QTY, read_Category;
+        string line;
+        while (getline(in_dbFile, line))
+        {
+            stringstream strStream(line);
+            getline(strStream, str_read_ID, ',');
+            getline(strStream, read_Name, ',');
+            getline(strStream, read_Author, ',');
+            getline(strStream, str_read_QTY, ',');
+            getline(strStream, read_Category);
+
+            read_ID = stoi(str_read_ID);
+            read_QTY = stoi(str_read_QTY);
+
+            cout << endl
+                 << read_ID << endl;
+            cout << read_Name << endl;
+            cout << read_Author << endl;
+            cout << read_QTY << endl;
+            cout << read_Category << endl;
+        }
+        in_dbFile.close();
+        cout << "\nEnter any Key to Continue..";
+        _getch();
+        system("CLS");
+    }
+};
 
 //Main method
 
+int item_ID; //GLOBAL
 int main()
 {
-    system("CLS");
-    std::ofstream out_dbFile;
-    std::ifstream in_dbFile;
-    boolean isValid;
-
+    ifstream in_dbFile;
+    ofstream out_dbFile;
     string dbFileName;
-    string yn;
-    int item_ID = 0;
+    string str_item_ID;
 
-    int chances = 4;
-    do
-    {
+    stringstream get_readFile_getID(read_dbFileName_item_ID());
+    getline(get_readFile_getID, dbFileName, ',');
+    getline(get_readFile_getID, str_item_ID);
 
-        isValid = true;
-        cout << "Would you Like to Open Default DATABASE ? [y/N]...  ";
-        cin >> yn;
-        //getline(cin,yn); cin.ignore();
+    stringstream conv_str_item_ID_to_item_ID;
 
-        if (yn != "Y" && yn != "y" && yn != "N" && yn != "n")
-        {
-            isValid = false;
-            if (chances < 2)
-            {
-                cout << "INVALID FILE NAME AFTER 3 TRIES, PROGRAM WILL EXIT NOW..";
-                exit(3);
-            }
-            cout << "\nINVALID INPUT, USE : 'Y', 'y', 'N', 'n'" << endl;
-            chances--;
-            cout << "PROGRAM WILL EXIT AFTER [" << chances << "] TRIES !";
-            Sleep(3000);
-        }
-        system("CLS");
-    } while (isValid == false);
+    conv_str_item_ID_to_item_ID << str_item_ID;
+    conv_str_item_ID_to_item_ID >> item_ID;
 
-    if (yn == "Y" || yn == "y")
-    {
-        dbFileName = "dbFile";
-        out_dbFile.open((dbFileName + ".txt"), std::ios::app);
-    }
-    else
-    {
-        cout << "Enter DATABASE File Name [w/out .txt] : ";
-        cin >> dbFileName;
-        Sleep(1250);
-        system("CLS");
-        out_dbFile.open((dbFileName + ".txt"), std::ios::app);
-    }
+    InventoryClass inventoryClassObj(dbFileName, item_ID);
 
-    if (out_dbFile.is_open())
-    {
-        cout << "Connected to DATABSE File Successfully.." << endl;
-        Sleep(1450);
-        system("CLS");
-    }
-    else
-    {
-        cerr << "ERROR :: Unable to Connect to DATABASE"; //CERR USED INSTEAD OF COUT
-        Sleep(3000);
-        system("CLS");
-    }
-
-    //TEST OUTSTREAM                                                   ::: PASSED :::
-    //out_dbFile << "DATABASE MANAGEMENT" << endl;
-    out_dbFile.close();
-
-    in_dbFile.open((dbFileName + ".txt"), std::ios::app); //RECIEVING ID FROM LIST
-    string fileItem;
-    while (getline(in_dbFile, fileItem))
-    {
-        string stringLine = fileItem; //BUG
-        char charLine[100];           //stringLine.length() inside charLine[] not required, DynamicAlloc                    //BUG
-        strcpy(charLine, stringLine.c_str());
-        int readID = atoi(charLine); //BUG
-        //if (readID >= 0 || readID <= 100)
-        //{ //BUG
-            /*cout << endl
-                 << readID << endl;
-            _getch();*/ //TESTING, NOT REQUIRED
-            item_ID = readID; //BUG
-        //}
-    }
-    in_dbFile.close();
-
+    bool isValid;
     MenuClass mainObj;
-    //boolean isValid;
 
     while (true)
     {
@@ -209,70 +248,12 @@ int main()
 
                 case 1:
                 {
-                    out_dbFile.open((dbFileName + ".txt"), std::ios::app);
-                    vector<string> bookDataVector; // ::: REMINDER ::: STUDY VECTORS
-                    system("CLS");
-                    int id;
-                    string id_string, name, author, category;
-                    cout << "__ADDING NEW ITEM__" << endl;
-
-                    cout << "\nID : " << item_ID << endl;
-                    cout << "NAME : ";
-                    cin.ignore();
-                    getline(cin, name);    
-                    cout << "AUTHOR NAME : ";
-                    getline(cin, author);
-                    cout << "CATEGORY : ";
-                    getline(cin, category);
-                    //cin.ignore();
-
-                    id_string = to_string(item_ID);
-                    bookDataVector.push_back(id_string);
-                    bookDataVector.push_back(name);
-                    bookDataVector.push_back(author);
-                    bookDataVector.push_back(category);
-
-                    //out_dbFile << to_string(id) << endl; //CAN'T PLACE INT TYPE IN VECTOR<STRING>
-                    for (string item : bookDataVector)
-                    {
-                        out_dbFile << item << endl;
-                    }
-                    out_dbFile << endl;
-                    out_dbFile.close(); //IMPORTANT
-                                        //TEST OUTSTEAM
-
-                    item_ID++;
-                    cout << "\n\nUpdating DATABASE...";
-                    Sleep(1450);
-                    system("CLS");
+                    item_ID = inventoryClassObj.addProduct_CASE_1(dbFileName, item_ID);
                     break;
                 }
                 case 2:
                 {
-                    system("CLS");
-                    cout << "READING FROM " << dbFileName << "..." << endl;
-                    Sleep(1250);
-                    in_dbFile.open(dbFileName + ".txt");
-                    string fileItem; //REPITITIVE MUTABLE STRING ?? MOVE OUT OF SWITCH CASE INTO WHILE(TRUE) TO MAKE GLOBALLY AVAIABLE INSIDE SWITCH CASE
-
-                    /*getline(in_dbFile, fileItem); //DID NOT READ ENTIRE LINE !
-                while (!in_dbFile.eof())
-                {
-                    cout << fileItem << endl; //SPITS OUT
-                    in_dbFile >> fileItem;    //STRANGE BEHAVIOUR ::: CHECK WITH DEBUGGER //WARNING ::::::: MUTABLE TYPE (STRING) OVERWRITTEN ?
-                }*/
-
-                    unsigned int lineNumber = 0; //unsigned = positive int
-                    while (getline(in_dbFile, fileItem))
-                    {
-                        cout << "[" << lineNumber << "] " << fileItem << endl;
-                        lineNumber++;
-                    }
-
-                    in_dbFile.close(); //IMPORTANT
-                    cout << "\nEnter any Key to Continue..";
-                    _getch();
-                    system("CLS");
+                    inventoryClassObj.displayProducts_CASE_2(dbFileName);
                     break;
                 }
                 case 7:
@@ -285,7 +266,8 @@ int main()
                 default:
                     break;
                 }
-                if(choice == 7){
+                if (choice == 7)
+                {
                     break;
                 }
             }
@@ -293,7 +275,7 @@ int main()
         else
         {
             while (true)
-            {   
+            {
                 int choice = mainObj.menuValidation(5, 2);
                 switch (choice)
                 {
@@ -306,7 +288,8 @@ int main()
                 default:
                     break;
                 }
-                if(choice == 5){
+                if (choice == 5)
+                {
                     break;
                 }
             }
@@ -320,16 +303,109 @@ int main()
 
 // ::: INVENTORY MENU :::
 
-void addProduct()
+string read_dbFileName_item_ID()
 {
-}
+    string return_dbFileName_item_ID;
+    system("CLS");
+    ofstream out_dbFile;
+    ifstream in_dbFile;
 
-void displayProducts()
-{
+    boolean isValid;
+    string dbFileName;
+    string yn;
+    int item_ID = 0;
+    int chances = 4;
+
+    do
+    {
+
+        isValid = true;
+        cout << "Would you Like to Open Default DATABASE ? [y/N]...  ";
+        cin >> yn;
+        //getline(cin,yn); cin.ignore();
+
+        if (yn != "Y" && yn != "y" && yn != "N" && yn != "n")
+        {
+            isValid = false;
+            if (chances < 2)
+            {
+                cout << "INVALID FILE NAME AFTER 3 TRIES, PROGRAM WILL EXIT NOW..";
+                exit(3);
+            }
+            cout << "\nINVALID INPUT, USE : 'Y', 'y', 'N', 'n'" << endl;
+            chances--;
+            cout << "PROGRAM WILL EXIT AFTER [" << chances << "] TRIES !";
+            Sleep(3000);
+        }
+        system("CLS");
+    } while (isValid == false);
+
+    if (yn == "Y" || yn == "y")
+    {
+        dbFileName = "dbFile";
+        in_dbFile.open((dbFileName + ".txt"), std::ios::app);
+    }
+    else
+    {
+        cout << "Enter DATABASE File Name [w/out .txt] : ";
+        cin >> dbFileName;
+        Sleep(1250);
+        system("CLS");
+        in_dbFile.open((dbFileName + ".txt"), std::ios::app);
+    }
+
+    if (in_dbFile.is_open())
+    {
+        cout << "Connected to DATABSE File Successfully.." << endl;
+        Sleep(990);
+        cout << "Reading DATABASE, Grabbing item_ID.." << endl;
+
+        string idLine;
+        string str_tempID;
+        int tempID = 0;
+        cout << endl
+             << tempID;
+        while (getline(in_dbFile, idLine))
+        {
+            stringstream getID(idLine); // ::: OVERWRITE getID OBJECT :::
+            getline(getID, str_tempID, ',');
+            stringstream conv; // ::: OVERWRITE conv OBJECT ::: --> IF FAIL : COUNT LINES, CREATE ARRAY OF OBJ
+            conv << str_tempID;
+            conv >> tempID;
+            //tempID = stoi(str_tempID);
+        }
+        item_ID = tempID; //*
+
+        cout << "\n\ngrabbed tempID : " << tempID << endl;
+        cout << "targer item_ID : " << item_ID << endl;
+        _getch();
+
+        Sleep(1450);
+        system("CLS");
+    }
+    else
+    {
+        cerr << "ERROR :: Unable to Connect to DATABASE"; //CERR USED INSTEAD              OF COUT
+        Sleep(3000);
+        system("CLS");
+    }
+
+    in_dbFile.close();
+
+    string str_itemID;
+
+    stringstream conv_item_ID_to_str;
+
+    conv_item_ID_to_str << item_ID;
+    conv_item_ID_to_str >> str_itemID;
+
+    return_dbFileName_item_ID = dbFileName + "," + str_itemID;
+
+    return return_dbFileName_item_ID;
 }
 
 void productSearch()
-{
+{   
 }
 
 void categoryFilter()
