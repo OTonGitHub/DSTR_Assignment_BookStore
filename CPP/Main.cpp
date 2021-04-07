@@ -418,8 +418,30 @@ string read_dbFileName_item_ID()
     return return_dbFileName_item_ID;
 }
 
-void productSearch() //
+void productSearch(string fileName) // Combine with Categoryilter
 {
+    system("CLS");
+    string searchString;
+    int searchID;
+    bool use_searchID = true;
+    cout << "SEARCH [ID OR Name/Author] : ";
+    getline(cin, searchString);
+
+    stringstream searchStringStream(searchString);
+    if (searchStringStream >> searchID)
+    {
+        if (searchStringStream.eof())
+        {
+            searchStringStream >> searchString;
+        }else{
+            use_searchID = false;
+        }
+    }
+    if(use_searchID == true){
+        ifstream in_dbFile;
+        in_dbFile.open((fileName+".txt"),std::ios::app);
+        while(getline(in_dbFile,))
+    }
 }
 
 void categoryFilter()
