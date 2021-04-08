@@ -4,10 +4,9 @@
 #include <fstream>
 #include <windows.h>
 
-
 using namespace std;
 
-void productSearch(string fileName) // Combine with Categoryilter
+void productSearch_CASE_3(string fileName) // Combine with Categoryilter
 {
     system("CLS");
     string searchString;
@@ -15,14 +14,25 @@ void productSearch(string fileName) // Combine with Categoryilter
     bool use_searchID = true;
     bool matchFound;
 
-    /*struct bkStoreRecordNode{
+    struct bkStoreRecordNode
+    {
         int itemID;
         string bookName;
         string Author;
         int qty;
         string category;
-        struct bkStoreRecordNode * linkPtr;
-    };*/
+        struct bkStoreRecordNode *linkPtr;
+    };
+
+    
+
+    ifstream in_dbFile;
+    in_dbFile.open((fileName + ".txt"), std::ios::app);
+    string line;
+    while (getline(in_dbFile, line))
+    {
+
+    }
 
     cout << "SEARCH [ID OR Name/Author] : ";
     getline(cin, searchString);
@@ -67,9 +77,12 @@ void productSearch(string fileName) // Combine with Categoryilter
                 matchFound = false;
             }
         }
+
+        in_dbFile.close();
     }
     else
     {
+        //OPEN FILE OR LINKED-LIST HERE:::
         cout << "\nSEARCH BOOK_NAME / AUTHOR..." << endl;
     }
 
@@ -90,5 +103,5 @@ void productSearch(string fileName) // Combine with Categoryilter
 
 int main()
 {
-    productSearch("dbFile");
+    productSearch_CASE_3("dbFile");
 }
