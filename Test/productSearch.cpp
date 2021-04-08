@@ -2,6 +2,8 @@
 #include <string>
 #include <sstream>
 #include <fstream>
+#include <windows.h>
+
 
 using namespace std;
 
@@ -13,14 +15,14 @@ void productSearch(string fileName) // Combine with Categoryilter
     bool use_searchID = true;
     bool matchFound;
 
-    struct bkStoreRecordNode{
+    /*struct bkStoreRecordNode{
         int itemID;
         string bookName;
         string Author;
         int qty;
         string category;
         struct bkStoreRecordNode * linkPtr;
-    };
+    };*/
 
     cout << "SEARCH [ID OR Name/Author] : ";
     getline(cin, searchString);
@@ -70,13 +72,19 @@ void productSearch(string fileName) // Combine with Categoryilter
     {
         cout << "\nSEARCH BOOK_NAME / AUTHOR..." << endl;
     }
-    if (use_searchID && matchFound)
+
+    if (use_searchID)
     {
-        cout << "\nMATCH FOUND !" << endl;
-    }
-    else
-    {
-        cout << "\nSORRY! NO MATCH" << endl;
+        cout << "SEARCHING BY ID.." << endl;
+        Sleep(500);
+        if (matchFound)
+        {
+            cout << "\nMATCH FOUND !" << endl;
+        }
+        if (!matchFound)
+        {
+            cout << "\nSORRY! NO MATCH" << endl;
+        }
     }
 }
 

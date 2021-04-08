@@ -12,8 +12,9 @@ using namespace std;
 
 //Prototypes
 string read_dbFileName_item_ID();
-void addProduct_CASE_1(string dbFileName, int item_ID);
-void displayProducts_CASE_2(string dbFileName);
+//void addProduct_CASE_1(string dbFileName, int item_ID);
+//void displayProducts_CASE_2(string dbFileName);
+void productSearch_CASE_3(string fileName);
 
 //Classes
 class MenuClass
@@ -25,11 +26,12 @@ private:
         cout << "\t___INVENTORY MENU___" << endl;
         cout << "[1] addProduct()" << endl;
         cout << "[2] displayProducts()" << endl;
-        cout << "[3] categoryFilter()" << endl;
-        cout << "[4] updateProduct()" << endl;
-        cout << "[5] sortProduct()" << endl; //SORT ON AVAILABLE QTY
-        cout << "[6] deleteproduct()" << endl;
-        cout << "[7] mainMenu()" << endl;
+        cout << "[3] productSearch()" << endl;
+        cout << "[4] categoryFilter()" << endl;
+        cout << "[5] updateProduct()" << endl;
+        cout << "[6] sortProduct()" << endl; //SORT ON AVAILABLE QTY
+        cout << "[7] deleteproduct()" << endl;
+        cout << "[8] mainMenu()" << endl;
         cout << "[0] exit()";
     }
 
@@ -256,7 +258,7 @@ int main()
         {
             while (true)
             {
-                int choice = mainObj.menuValidation(7, 1);
+                int choice = mainObj.menuValidation(8, 1);
                 switch (choice)
                 {
 
@@ -270,6 +272,10 @@ int main()
                     inventoryClassObj.displayProducts_CASE_2(dbFileName);
                     break;
                 }
+                case 3:
+                    productSearch_CASE_3(dbFileName);
+                    break;
+
                 case 7:
                     //Repeat
                     break;
@@ -377,8 +383,8 @@ string read_dbFileName_item_ID()
         string idLine;
         string str_tempID;
         int tempID = 0;
-       // cout << endl          // NOT REQUIRED ::: DELETE ::: ONLY USED FOR TESTING
-       //      << tempID;
+        // cout << endl          // NOT REQUIRED ::: DELETE ::: ONLY USED FOR TESTING
+        //      << tempID;
         while (getline(in_dbFile, idLine))
         {
             stringstream getID(idLine); // ::: OVERWRITE getID OBJECT :::
@@ -390,9 +396,9 @@ string read_dbFileName_item_ID()
         }
         item_ID = tempID; //*
 
-       // cout << "\n\ngrabbed tempID : " << tempID << endl;
-       // cout << "targer item_ID : " << item_ID << endl;     // NOT REQUIRED ::: DELETE ::: ONLY USED FOR TESTING
-       // _getch();
+        // cout << "\n\ngrabbed tempID : " << tempID << endl;
+        // cout << "targer item_ID : " << item_ID << endl;     // NOT REQUIRED ::: DELETE ::: ONLY USED FOR TESTING
+        // _getch();
 
         Sleep(1450);
         system("CLS");
@@ -418,9 +424,80 @@ string read_dbFileName_item_ID()
     return return_dbFileName_item_ID;
 }
 
-void productSearch(string fileName) // Combine with Categoryilter
+void productSearch_CASE_3(string fileName) // Combine with Categoryilter
 {
-  
+    cin.ignore();
+    system("CLS");
+    string searchString;
+    int searchID;
+    bool use_searchID = true;
+    bool matchFound;
+
+    cout << "SEARCH [ID OR Name/Author] : ";
+    getline(cin, searchString);
+
+    stringstream searchStringStream(searchString);
+    if (searchStringStream >> searchID)
+    {
+        if (searchStringStream.eof())
+        {
+            searchStringStream >> searchString;
+        }
+        else
+        {
+            use_searchID = false;
+        }
+    }
+    else
+    {
+        use_searchID = false;
+    }
+
+    if (use_searchID == true)
+    {
+        ifstream in_dbFile;
+        string line;
+        int grabbedID;
+        in_dbFile.open((fileName + ".txt"), std::ios::app);
+        while (getline(in_dbFile, line))
+        {
+            stringstream pull_itemID(line);
+            string str_itemID;
+            int itemID;
+            getline(pull_itemID, str_itemID, ',');
+            grabbedID = stoi(str_itemID);
+            if (searchID == grabbedID)
+            {
+                matchFound = true;
+                break;
+            }
+            else
+            {
+                matchFound = false;
+            }
+        }
+    }
+    else
+    {
+        cout << "\nSEARCH BOOK_NAME / AUTHOR..." << endl;
+    }
+
+    if (use_searchID)
+    {
+        cout << "SEARCHING BY ID.." << endl;
+        Sleep(500);
+        if (matchFound)
+        {
+            cout << "MATCH FOUND !" << endl;
+        }
+        if (!matchFound)
+        {
+            cout << "SORRY! NO MATCH" << endl;
+        }
+    }
+    cout << "\nEnter any Key to Continue..";
+        _getch();
+    system("CLS"); //MOVE TO MAIN MENU TO REFACTOR
 }
 
 void categoryFilter()
