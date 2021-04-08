@@ -377,8 +377,8 @@ string read_dbFileName_item_ID()
         string idLine;
         string str_tempID;
         int tempID = 0;
-        cout << endl
-             << tempID;
+       // cout << endl          // NOT REQUIRED ::: DELETE ::: ONLY USED FOR TESTING
+       //      << tempID;
         while (getline(in_dbFile, idLine))
         {
             stringstream getID(idLine); // ::: OVERWRITE getID OBJECT :::
@@ -390,9 +390,9 @@ string read_dbFileName_item_ID()
         }
         item_ID = tempID; //*
 
-        cout << "\n\ngrabbed tempID : " << tempID << endl;
-        cout << "targer item_ID : " << item_ID << endl;
-        _getch();
+       // cout << "\n\ngrabbed tempID : " << tempID << endl;
+       // cout << "targer item_ID : " << item_ID << endl;     // NOT REQUIRED ::: DELETE ::: ONLY USED FOR TESTING
+       // _getch();
 
         Sleep(1450);
         system("CLS");
@@ -420,28 +420,7 @@ string read_dbFileName_item_ID()
 
 void productSearch(string fileName) // Combine with Categoryilter
 {
-    system("CLS");
-    string searchString;
-    int searchID;
-    bool use_searchID = true;
-    cout << "SEARCH [ID OR Name/Author] : ";
-    getline(cin, searchString);
-
-    stringstream searchStringStream(searchString);
-    if (searchStringStream >> searchID)
-    {
-        if (searchStringStream.eof())
-        {
-            searchStringStream >> searchString;
-        }else{
-            use_searchID = false;
-        }
-    }
-    if(use_searchID == true){
-        ifstream in_dbFile;
-        in_dbFile.open((fileName+".txt"),std::ios::app);
-        while(getline(in_dbFile,))
-    }
+  
 }
 
 void categoryFilter()
