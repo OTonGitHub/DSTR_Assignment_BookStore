@@ -1,12 +1,14 @@
 //FT. FILESYSTEM  ::: ITERATION 3.0
 #include <iostream>
 #include <string>
-#include <windows.h>
+#include <unistd.h>
 #include <fstream>
 #include <vector>
 #include <string>
-#include <conio.h>
 #include <sstream>
+#include <curses.h>
+//#include <termios.h>
+//#include <conio.h>
 
 using namespace std;
 
@@ -50,14 +52,14 @@ public:
     MenuClass() // ... :::: PRIVATE CLASS :::: ...
     {
         cout << "Menu Class Object Created Successfully..\n";
-        Sleep(1450);
+        sleep(1450);
     }
 
     int menuValidation(int maxValue, int menu)
     {
         {
             int choice = 0;
-            boolean isValid = false;
+            bool isValid = false;
 
             do
             {
@@ -76,7 +78,7 @@ public:
                 if (choice < 0 || choice > maxValue)
                 {
                     cout << "INVALID OPTION, TRY AGAIN IN 3 SECONDS...";
-                    Sleep(3000);
+                    sleep(3000);
                     system("CLS");
                     isValid = false;
                 }
@@ -165,7 +167,7 @@ public:
         out_dbFile.close();
 
         cout << "\n\nUpdating DATABASE...";
-        Sleep(1450);
+        sleep(1450);
         system("CLS");
 
         return item_ID;
@@ -200,7 +202,7 @@ public:
         }
         in_dbFile.close();
         cout << "\nEnter any Key to Continue..";
-        _getch();
+        getch();
         system("CLS");
     }
 };
@@ -245,13 +247,13 @@ int main()
             if (choice < 1 || choice > 2)
             {
                 cout << "\nINVALID SUB-SYSTEM SELECTED, TRY AGAIN..";
-                Sleep(2250);
+                sleep(2250);
                 isValid = false;
             }
         } while (isValid == false);
 
         cout << "\n\nREDIRECTING TO SUB-SYSTEM...";
-        Sleep(1500);
+        sleep(1500);
         system("CLS");
 
         if (choice == 1)
@@ -330,7 +332,7 @@ string read_dbFileName_item_ID()
     ofstream out_dbFile;
     ifstream in_dbFile;
 
-    boolean isValid;
+    bool isValid;
     string dbFileName;
     string yn;
     int item_ID = 0;
@@ -355,7 +357,7 @@ string read_dbFileName_item_ID()
             cout << "\nINVALID INPUT, USE : 'Y', 'y', 'N', 'n'" << endl;
             chances--;
             cout << "PROGRAM WILL EXIT AFTER [" << chances << "] TRIES !";
-            Sleep(3000);
+            sleep(3000);
         }
         system("CLS");
     } while (isValid == false);
@@ -369,7 +371,7 @@ string read_dbFileName_item_ID()
     {
         cout << "Enter DATABASE File Name [w/out .txt] : ";
         cin >> dbFileName;
-        Sleep(1250);
+        sleep(1250);
         system("CLS");
         in_dbFile.open((dbFileName + ".txt"), std::ios::app);
     }
@@ -377,7 +379,7 @@ string read_dbFileName_item_ID()
     if (in_dbFile.is_open())
     {
         cout << "Connected to DATABSE File Successfully.." << endl;
-        Sleep(990);
+        sleep(990);
         cout << "Reading DATABASE, Grabbing item_ID.." << endl;
 
         string idLine;
@@ -400,13 +402,13 @@ string read_dbFileName_item_ID()
         // cout << "targer item_ID : " << item_ID << endl;     // NOT REQUIRED ::: DELETE ::: ONLY USED FOR TESTING
         // _getch();
 
-        Sleep(1450);
+        sleep(1450);
         system("CLS");
     }
     else
     {
         cerr << "ERROR :: Unable to Connect to DATABASE"; //CERR USED INSTEAD              OF COUT
-        Sleep(3000);
+        sleep(3000);
         system("CLS");
     }
 
@@ -485,7 +487,7 @@ void productSearch_CASE_3(string fileName) // Combine with Categoryilter
     if (use_searchID)
     {
         cout << "SEARCHING BY ID.." << endl;
-        Sleep(500);
+        sleep(500);
         if (matchFound)
         {
             cout << "MATCH FOUND !" << endl;
@@ -496,7 +498,7 @@ void productSearch_CASE_3(string fileName) // Combine with Categoryilter
         }
     }
     cout << "\nEnter any Key to Continue..";
-        _getch();
+        getch();
     system("CLS"); //MOVE TO MAIN MENU TO REFACTOR
 }
 
