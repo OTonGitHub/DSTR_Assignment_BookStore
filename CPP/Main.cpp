@@ -1,4 +1,14 @@
 //FT. FILESYSTEM  ::: ITERATION 3.0
+//COMMENTED OUT <ncurses> LIBRARI
+//CONVERTED sleep() --> usleep(*10^3) [add 000, for example sleep(1450) to sleep(1450000)] milli to micro conversion
+//CONVERTED system("CLS") --> system("clear")
+//ISSUE WITH GETCH()
+    //SUGGESTION
+        //USE getchar()
+            //DID NOT FIX, SAME ISSUE OCCURERS, NO ADDITIONAL PROBLEMS
+            //
+        //build library to use getch()
+
 #include <iostream>
 #include <string>
 #include <unistd.h>
@@ -6,7 +16,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
-#include <curses.h>
+//#include <ncurses>
 //#include <termios.h>
 //#include <conio.h>
 
@@ -25,6 +35,7 @@ class MenuClass
 private:
     void printInventoryMenu()
     {
+        //system("clear"); //TRY REMOVE :::PERFORMANCE HIT, IMPORTANT:::
         cout << "\t___INVENTORY MENU___" << endl;
         cout << "[1] addProduct()" << endl;
         cout << "[2] displayProducts()" << endl;
@@ -52,7 +63,7 @@ public:
     MenuClass() // ... :::: PRIVATE CLASS :::: ...
     {
         cout << "Menu Class Object Created Successfully..\n";
-        sleep(1450);
+        usleep(1450000);
     }
 
     int menuValidation(int maxValue, int menu)
@@ -78,8 +89,8 @@ public:
                 if (choice < 0 || choice > maxValue)
                 {
                     cout << "INVALID OPTION, TRY AGAIN IN 3 SECONDS...";
-                    sleep(3000);
-                    system("CLS");
+                    usleep(3000000);
+                    system("clear");
                     isValid = false;
                 }
 
@@ -105,7 +116,7 @@ public:
     int addProduct_CASE_1(string dbFileName, int item_ID)
     {
         ofstream out_dbFile;
-        system("CLS");
+        system("clear");
         out_dbFile.open((dbFileName + ".txt"), std::ios::app);
         int write_QTY;
         string write_Name, write_Author, write_Category, temp_str_write_QTY;
@@ -134,7 +145,7 @@ public:
         cout << "Category : ";
         cin.ignore();
         getline(cin, write_Category);
-
+    
         vector<string> write_Line;
 
         string str_write_ID;
@@ -166,16 +177,18 @@ public:
         }
         out_dbFile.close();
 
-        cout << "\n\nUpdating DATABASE...";
-        sleep(1450);
-        system("CLS");
+        
+        cout << "\nUpdating DATABASE...";
+        cin.ignore();
+        usleep(1450000);
+        system("clear");
 
         return item_ID;
     }
 
     void displayProducts_CASE_2(string dbFileName)
     {
-        system("CLS");
+        system("clear");
         ifstream in_dbFile;
         in_dbFile.open((dbFileName + ".txt"), std::ios::app); //PRINTING ENTIRE FILE
         int read_ID, read_QTY;
@@ -202,8 +215,10 @@ public:
         }
         in_dbFile.close();
         cout << "\nEnter any Key to Continue..";
-        getch();
-        system("CLS");
+        //getchar();
+        int getch;
+        cin >> getch;
+        system("clear");
     }
 };
 
@@ -238,7 +253,7 @@ int main()
         do
         {
             isValid = true;
-            system("CLS");
+            system("clear");
             cout << "__WELCOME TO BOOK-O-MATRIX__" << endl;
             cout << "[1] INVENTORY MANAGEMENT" << endl;
             cout << "[2] TRANSACTION MANAGEMENT" << endl;
@@ -247,14 +262,14 @@ int main()
             if (choice < 1 || choice > 2)
             {
                 cout << "\nINVALID SUB-SYSTEM SELECTED, TRY AGAIN..";
-                sleep(2250);
+                usleep(2250000);
                 isValid = false;
             }
         } while (isValid == false);
 
         cout << "\n\nREDIRECTING TO SUB-SYSTEM...";
-        sleep(1500);
-        system("CLS");
+        usleep(1500000);
+        system("clear");
 
         if (choice == 1)
         {
@@ -328,7 +343,7 @@ int main()
 string read_dbFileName_item_ID()
 {
     string return_dbFileName_item_ID;
-    system("CLS");
+    system("clear");
     ofstream out_dbFile;
     ifstream in_dbFile;
 
@@ -357,9 +372,9 @@ string read_dbFileName_item_ID()
             cout << "\nINVALID INPUT, USE : 'Y', 'y', 'N', 'n'" << endl;
             chances--;
             cout << "PROGRAM WILL EXIT AFTER [" << chances << "] TRIES !";
-            sleep(3000);
+            usleep(3000000);
         }
-        system("CLS");
+        system("clear");
     } while (isValid == false);
 
     if (yn == "Y" || yn == "y")
@@ -372,14 +387,14 @@ string read_dbFileName_item_ID()
         cout << "Enter DATABASE File Name [w/out .txt] : ";
         cin >> dbFileName;
         sleep(1250);
-        system("CLS");
+        system("clear");
         in_dbFile.open((dbFileName + ".txt"), std::ios::app);
     }
 
     if (in_dbFile.is_open())
     {
         cout << "Connected to DATABSE File Successfully.." << endl;
-        sleep(990);
+        usleep(990000);
         cout << "Reading DATABASE, Grabbing item_ID.." << endl;
 
         string idLine;
@@ -402,14 +417,14 @@ string read_dbFileName_item_ID()
         // cout << "targer item_ID : " << item_ID << endl;     // NOT REQUIRED ::: DELETE ::: ONLY USED FOR TESTING
         // _getch();
 
-        sleep(1450);
-        system("CLS");
+        usleep(1450000);
+        system("clear");
     }
     else
     {
         cerr << "ERROR :: Unable to Connect to DATABASE"; //CERR USED INSTEAD              OF COUT
-        sleep(3000);
-        system("CLS");
+        usleep(3000000);
+        system("clear");
     }
 
     in_dbFile.close();
@@ -429,7 +444,7 @@ string read_dbFileName_item_ID()
 void productSearch_CASE_3(string fileName) // Combine with Categoryilter
 {
     cin.ignore();
-    system("CLS");
+    system("clear");
     string searchString;
     int searchID;
     bool use_searchID = true;
@@ -487,7 +502,7 @@ void productSearch_CASE_3(string fileName) // Combine with Categoryilter
     if (use_searchID)
     {
         cout << "SEARCHING BY ID.." << endl;
-        sleep(500);
+        usleep(500000);
         if (matchFound)
         {
             cout << "MATCH FOUND !" << endl;
@@ -498,8 +513,10 @@ void productSearch_CASE_3(string fileName) // Combine with Categoryilter
         }
     }
     cout << "\nEnter any Key to Continue..";
-        getch();
-    system("CLS"); //MOVE TO MAIN MENU TO REFACTOR
+        //getch();
+        int getch2;
+        cin >> getch2;
+    system("clear"); //MOVE TO MAIN MENU TO REFACTOR
 }
 
 void categoryFilter()
