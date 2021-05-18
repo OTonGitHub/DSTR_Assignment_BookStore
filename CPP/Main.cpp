@@ -130,7 +130,7 @@ public:
             cout << "QTY : ";
         }
         cout << "Category : ";
-        cin.ignore();
+        //cin.ignore();
         getline(cin, write_Category);
 
         vector<string> write_Line;
@@ -206,6 +206,74 @@ public:
 };
 
 //Main method
+
+struct MainDB_LinkedList_Node{
+    int item_ID;
+    string title;
+    string author;
+    int qty;
+    string category;
+
+    struct MainDB_LinkedList_Node * link = NULL;
+};
+
+struct MainDB_LinkedList_Node* head = NULL;
+struct MainDB_LinkedList_Node* currentNode = NULL;
+struct MainDB_LinkedList_Node* tempNode = NULL;
+
+void CPY_dbFile_to_MainDB_LinkedList()
+{
+    system("CLS");
+    ifstream in_dbFile;
+    in_dbFile.open(("dbFile.txt"), std::ios::app); //PRINTING ENTIRE FILE
+    int read_ID, read_QTY;
+    string str_read_ID, read_Title, read_Author, str_read_QTY, read_Category;
+    string line;
+    
+
+    int tempID = 1;
+     while(getline(in_dbFile, line))
+     {
+
+     stringstream strStream(line);
+     getline(strStream, str_read_ID, ',');
+     getline(strStream, read_Title, ',');
+     getline(strStream, read_Author, ',');
+     getline(strStream, str_read_QTY, ',');
+     getline(strStream, read_Category);
+
+    read_ID = stoi(str_read_ID);
+    read_QTY = stoi(str_read_QTY);
+    tempID = read_ID;
+
+
+    if(head == NULL)
+        {
+            currentNode = (struct MainDB_LinkedList_Node*)malloc(sizeof(MainDB_LinkedList_Node));
+
+            currentNode->item_ID = read_ID;
+            currentNode->title = read_Title;
+            currentNode->author = read_Author;
+            currentNode->qty = read_QTY;
+            currentNode->category = read_Category;
+                
+            currentNode->link = NULL;
+
+            head = currentNode;
+
+            for(int i = 0; i < read_ID; i++)
+            {
+                currentNode = (struct MainDB_LinkedList_Node*)malloc(sizeof(MainDB_LinkedList_Node));
+
+            }
+        }
+     }
+    in_dbFile.close();
+    cout << "\nEnter any Key to Continue..";
+    _getch();
+    system("CLS");
+}
+
 
 int item_ID; //GLOBAL
 int main()
