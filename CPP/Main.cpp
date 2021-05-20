@@ -16,6 +16,176 @@ string read_dbFileName_item_ID();
 //void displayProducts_CASE_2(string dbFileName);
 void productSearch_CASE_3(string fileName);
 
+//Nodes
+struct MainDB_LinkedList_Node {
+    int item_ID;
+    string title;
+    string author;
+    int qty;
+    string category;
+
+    struct MainDB_LinkedList_Node* link = NULL;
+};
+
+struct MainDB_LinkedList_Node* Head = NULL;
+struct MainDB_LinkedList_Node* CurrentNode = NULL;
+struct MainDB_LinkedList_Node* LastNode = NULL;
+struct MainDB_LinkedList_Node* TempNode = NULL;
+
+//LocalFunctions
+void insertEnd_v2(//Proprietary Naming Convention for Developers//Function Taken from Templates created by Ifhaam & Allan//PassByReference:D!Value
+    struct MainDB_LinkedList_Node** headPtr,
+    struct MainDB_LinkedList_Node** lastNodePtr,
+    int item_ID,
+    string title,
+    string author,
+    int qty,
+    string category)
+
+{
+    struct MainDB_LinkedList_Node* CurrentNode = new  MainDB_LinkedList_Node;
+    //CurrentNode = (struct MainDB_LinkedList_Node*)malloc(sizeof(MainDB_LinkedList_Node)); GIVES HUUGE ERROR !
+    CurrentNode->item_ID = item_ID;
+    CurrentNode->title = title;
+    CurrentNode->author = author;
+    CurrentNode->qty = qty;
+    CurrentNode->category = category;
+
+    CurrentNode->link = NULL;
+
+    if (*headPtr == NULL)
+    {
+        *headPtr = CurrentNode;
+        *lastNodePtr = CurrentNode;
+    }
+    else
+    {
+        TempNode = *lastNodePtr;
+        TempNode->link = CurrentNode;
+        *lastNodePtr = CurrentNode;
+    }
+}
+
+void PrintNode(struct MainDB_LinkedList_Node* head)
+{
+    struct MainDB_LinkedList_Node* reader = head;
+    if (reader == NULL)
+    {
+        std::cout << "LinkedList Empty";
+    }
+    else
+    {
+        //reader = Head;
+        while (reader != NULL)
+        {
+            cout << "Item ID : " << reader->item_ID << endl;
+            cout << "Book Title : " << reader->title << endl;
+            cout << "Author : " << reader->author << endl;
+            cout << "QTY : " << reader->qty << endl;
+            cout << "Category : " << reader->category << endl;
+            cout << "----------------------------------" << endl;
+            reader = reader->link;
+        }
+    }
+}
+
+
+void CPY_dbFile_to_MainDB_LinkedList()
+{
+    system("CLS");
+    ifstream in_dbFile;
+    in_dbFile.open(("dbFile.txt"), std::ios::app); //PRINTING ENTIRE FILE
+    int read_ID, read_QTY;
+    string str_read_ID, read_Title, read_Author, str_read_QTY, read_Category;
+    string line;
+
+
+    int tempID = 1;
+    while (getline(in_dbFile, line))
+    {
+
+        stringstream strStream(line);
+        getline(strStream, str_read_ID, ',');
+        getline(strStream, read_Title, ',');
+        getline(strStream, read_Author, ',');
+        getline(strStream, str_read_QTY, ',');
+        getline(strStream, read_Category);
+
+        read_ID = stoi(str_read_ID);
+        read_QTY = stoi(str_read_QTY);
+        tempID = read_ID;
+
+        insertEnd_v2(
+            &Head,
+            &LastNode,
+            read_ID,
+            read_Title,
+            read_Author,
+            read_QTY,
+            read_Category);
+
+    }
+    in_dbFile.close();
+    //system("CLS");
+}
+
+void CPY_MainDB_LinkedList_to_dbFile(struct MainDB_LinkedList_Node* head, string dbFileName) //pass Head as value head assign to printer //Realised can just use head
+{//IMPORANT !!! CHANGE CODE TO ONLY SAVE WHATS NOT IN THE FILE ALREADY :)D
+    ofstream out_dbFile;
+    system("CLS");
+    cout << "Writing LinkedList from RAM to Local Database..." << endl;
+    //out_dbFile.open((dbFileName + ".txt"), std::ios::app);
+    out_dbFile.open((dbFileName + ".txt"));
+
+    struct MainDB_LinkedList_Node* printer = head;
+        //can add if statement to verify if changes were brought
+        //reader = Head;
+
+    //vector<string> write_Line;
+
+    while (printer != NULL)
+        {
+            vector<string> write_Line;
+
+            string str_write_ID = to_string(printer->item_ID);
+            string write_Name = printer->title;
+            string write_Author = printer->author;
+            string str_write_QTY = to_string(printer->qty);
+            /*
+             string str_write_QTY;
+            stringstream ss; // ^ CAN REFACTOR TO 2 LINES USING ABOVE METHOD ^
+            ss << write_QTY;
+            ss >> str_write_QTY;
+            */
+            string write_Category = printer->category;
+
+            write_Line.push_back(str_write_ID);
+            write_Line.push_back(write_Name);
+            write_Line.push_back(write_Author);
+            write_Line.push_back(str_write_QTY);
+            write_Line.push_back(write_Category);
+
+            int count = 1;
+            for (string line : write_Line)
+            {
+                if (count == 5)
+                {
+                out_dbFile << line << endl;
+                }
+                else
+                {
+                    out_dbFile << line << ",";
+                }
+                count++;
+            }   
+            printer = printer->link;
+        }
+        out_dbFile.close();
+        cout<<"Done..";
+        Sleep(1450);
+        system("CLS");
+}
+
 //Classes
 class MenuClass
 {
@@ -87,6 +257,12 @@ public:
         }
     }
 };
+
+
+
+
+
+
 class InventoryClass
 {
 private:
@@ -102,9 +278,6 @@ public:
 
     int addProduct_CASE_1(string dbFileName, int item_ID)
     {
-        ofstream out_dbFile;
-        system("CLS");
-        out_dbFile.open((dbFileName + ".txt"), std::ios::app);
         int write_QTY;
         string write_Name, write_Author, write_Category, temp_str_write_QTY;
         item_ID++;
@@ -133,147 +306,35 @@ public:
         //cin.ignore();
         getline(cin, write_Category);
 
-        vector<string> write_Line;
+        
+            insertEnd_v2(
+            &Head,
+            &LastNode,
+            item_ID,
+            write_Name,
+            write_Author,
+            write_QTY,
+            write_Category);
 
-        string str_write_ID;
-        str_write_ID = to_string(item_ID);
+            cout << "\n\nUpdating DATABASE...";
+            Sleep(1450);
+            system("CLS");
+            return item_ID;
 
-        string str_write_QTY;
-        stringstream ss; // ^ CAN REFACTOR TO 2 LINES USING ABOVE METHOD ^
-        ss << write_QTY;
-        ss >> str_write_QTY;
-
-        write_Line.push_back(str_write_ID);
-        write_Line.push_back(write_Name);
-        write_Line.push_back(write_Author);
-        write_Line.push_back(str_write_QTY);
-        write_Line.push_back(write_Category);
-
-        int count = 1;
-        for (string line : write_Line)
-        {
-            if (count == 5)
-            {
-                out_dbFile << line << endl;
-            }
-            else
-            {
-                out_dbFile << line << ",";
-            }
-            count++;
-        }
-        out_dbFile.close();
-
-        cout << "\n\nUpdating DATABASE...";
-        Sleep(1450);
-        system("CLS");
-
-        return item_ID;
-    }
-
+    };
+    
     void displayProducts_CASE_2(string dbFileName)
     {
         system("CLS");
-        ifstream in_dbFile;
-        in_dbFile.open((dbFileName + ".txt"), std::ios::app); //PRINTING ENTIRE FILE
-        int read_ID, read_QTY;
-        string str_read_ID, read_Name, read_Author, str_read_QTY, read_Category;
-        string line;
-        while (getline(in_dbFile, line))
-        {
-            stringstream strStream(line);
-            getline(strStream, str_read_ID, ',');
-            getline(strStream, read_Name, ',');
-            getline(strStream, read_Author, ',');
-            getline(strStream, str_read_QTY, ',');
-            getline(strStream, read_Category);
-
-            read_ID = stoi(str_read_ID);
-            read_QTY = stoi(str_read_QTY);
-
-            cout << endl
-                 << read_ID << endl;
-            cout << read_Name << endl;
-            cout << read_Author << endl;
-            cout << read_QTY << endl;
-            cout << read_Category << endl;
-        }
-        in_dbFile.close();
+        PrintNode(Head);
         cout << "\nEnter any Key to Continue..";
         _getch();
         system("CLS");
     }
-};
+        
+    };
 
 //Main method
-
-struct MainDB_LinkedList_Node{
-    int item_ID;
-    string title;
-    string author;
-    int qty;
-    string category;
-
-    struct MainDB_LinkedList_Node * link = NULL;
-};
-
-struct MainDB_LinkedList_Node* head = NULL;
-struct MainDB_LinkedList_Node* currentNode = NULL;
-struct MainDB_LinkedList_Node* tempNode = NULL;
-
-void CPY_dbFile_to_MainDB_LinkedList()
-{
-    system("CLS");
-    ifstream in_dbFile;
-    in_dbFile.open(("dbFile.txt"), std::ios::app); //PRINTING ENTIRE FILE
-    int read_ID, read_QTY;
-    string str_read_ID, read_Title, read_Author, str_read_QTY, read_Category;
-    string line;
-    
-
-    int tempID = 1;
-     while(getline(in_dbFile, line))
-     {
-
-     stringstream strStream(line);
-     getline(strStream, str_read_ID, ',');
-     getline(strStream, read_Title, ',');
-     getline(strStream, read_Author, ',');
-     getline(strStream, str_read_QTY, ',');
-     getline(strStream, read_Category);
-
-    read_ID = stoi(str_read_ID);
-    read_QTY = stoi(str_read_QTY);
-    tempID = read_ID;
-
-
-    if(head == NULL)
-        {
-            currentNode = (struct MainDB_LinkedList_Node*)malloc(sizeof(MainDB_LinkedList_Node));
-
-            currentNode->item_ID = read_ID;
-            currentNode->title = read_Title;
-            currentNode->author = read_Author;
-            currentNode->qty = read_QTY;
-            currentNode->category = read_Category;
-                
-            currentNode->link = NULL;
-
-            head = currentNode;
-
-            for(int i = 0; i < read_ID; i++)
-            {
-                currentNode = (struct MainDB_LinkedList_Node*)malloc(sizeof(MainDB_LinkedList_Node));
-
-            }
-        }
-     }
-    in_dbFile.close();
-    cout << "\nEnter any Key to Continue..";
-    _getch();
-    system("CLS");
-}
-
 
 int item_ID; //GLOBAL
 int main()
@@ -291,6 +352,8 @@ int main()
 
     conv_str_item_ID_to_item_ID << str_item_ID;
     conv_str_item_ID_to_item_ID >> item_ID;
+
+    CPY_dbFile_to_MainDB_LinkedList();
 
     InventoryClass inventoryClassObj(dbFileName, item_ID);
 
@@ -349,6 +412,7 @@ int main()
                     break;
 
                 case 0:
+                    CPY_MainDB_LinkedList_to_dbFile(Head, dbFileName);
                     exit(3);
 
                 default:
@@ -371,6 +435,7 @@ int main()
                     //Repeat
                     break;
                 case 0:
+                    CPY_MainDB_LinkedList_to_dbFile(Head, dbFileName);
                     exit(3);
 
                 default:
@@ -384,6 +449,7 @@ int main()
         }
     }
 
+    //CPY_MainDB_LinkedList_to_dbFile(Head, dbFileName); Moved to SwitchCase (0){exit}
     return 0;
 }
 
@@ -564,7 +630,7 @@ void productSearch_CASE_3(string fileName) // Combine with Categoryilter
         }
     }
     cout << "\nEnter any Key to Continue..";
-        _getch();
+    _getch();
     system("CLS"); //MOVE TO MAIN MENU TO REFACTOR
 }
 

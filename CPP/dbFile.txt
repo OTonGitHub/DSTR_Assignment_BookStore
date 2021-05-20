@@ -1,7 +1,3 @@
-1,The Sun & Her FLowers,Rupi Kaur,12,omance
-2,Liar,Fidget. M. Spinner,3,rain Flop
-3,Roshi Fihaa Foiy,OT,55,xtreme Roshi Tutorials
-4,OT,OTandFriends,25,iceCat
-5,abc,abc,10,bc
-6,abc,abc,10,abc
-7,abc,abcabdc,231,abc
+1,OT,OT,100,OT
+2,Minnu,Minnu,20,Minnuty
+3,Lato,Latina,300,Latinonao
