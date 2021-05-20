@@ -10,13 +10,93 @@
 
 using namespace std;
 
-//Prototypes
+//Prototypes (commented are added to Class)
 string read_dbFileName_item_ID();
 //void addProduct_CASE_1(string dbFileName, int item_ID);
 //void displayProducts_CASE_2(string dbFileName);
 void productSearch_CASE_3(string fileName);
+void categoryFilter_CASE_4(struct MainDB_LinkedList_Node *head);
+void updateProduct_CASE_5(struct MainDB_LinkedList_Node *head);
+void sortProduct_CASE_6(struct MainDB_LinkedList_Node* head);
+void deleteProduct_CASE_7(struct MainDB_LinkedList_Node* head);
 
 //Nodes
+
+//SORTED LINKED LIST
+struct MainDB_Sort_LinkedList_Node{
+    int item_ID;
+    string title;
+    string author;
+    int qty;
+    string category;
+
+    struct MainDB_Sort_LinkedList_Node* link = NULL;
+};
+
+struct MainDB_Sort_LinkedList_Node* Sort_Head = NULL;
+struct MainDB_Sort_LinkedList_Node* Sort_CurrentNode = NULL;
+struct MainDB_Sort_LinkedList_Node* Sort_LastNode = NULL;
+struct MainDB_Sort_LinkedList_Node* Sort_TempNode = NULL;
+
+void insertEnd_v2_Sort(//Proprietary Naming Convention for Developers//Function Taken from Templates created by Ifhaam & Allan//PassByReference:D!Value
+    struct MainDB_Sort_LinkedList_Node** headPtr,
+    struct MainDB_Sort_LinkedList_Node** lastNodePtr,
+    int item_ID,
+    string title,
+    string author,
+    int qty,
+    string category)
+
+{
+    struct MainDB_Sort_LinkedList_Node* Sort_CurrentNode = new  MainDB_Sort_LinkedList_Node;
+    //CurrentNode = (struct MainDB_LinkedList_Node*)malloc(sizeof(MainDB_LinkedList_Node)); GIVES HUGE ERROR !
+    Sort_CurrentNode->item_ID = item_ID;
+    Sort_CurrentNode->title = title;
+    Sort_CurrentNode->author = author;
+    Sort_CurrentNode->qty = qty;
+    Sort_CurrentNode->category = category;
+
+    Sort_CurrentNode->link = NULL;
+
+    if (*headPtr == NULL)
+    {
+        *headPtr = Sort_CurrentNode;
+        *lastNodePtr = Sort_CurrentNode;
+    }
+    else
+    {
+        Sort_TempNode = *lastNodePtr;
+        Sort_TempNode->link = Sort_CurrentNode;
+        *lastNodePtr = Sort_CurrentNode;
+    }
+}
+
+void Sort_PrintNode(struct MainDB_Sort_LinkedList_Node* head)
+{
+    struct MainDB_Sort_LinkedList_Node* reader = head;
+    if (reader == NULL)
+    {
+        std::cout << "LinkedList Empty";
+    }
+    else
+    {
+        //reader = Head;
+        while (reader != NULL)
+        {
+            cout << "Item ID : " << reader->item_ID << endl;
+            cout << "Book Title : " << reader->title << endl;
+            cout << "Author : " << reader->author << endl;
+            cout << "QTY : " << reader->qty << endl;
+            cout << "Category : " << reader->category << endl;
+            cout << "----------------------------------" << endl;
+            reader = reader->link;
+        }
+    }
+}
+
+
+//MAIN LINKED LIST
+
 struct MainDB_LinkedList_Node {
     int item_ID;
     string title;
@@ -26,6 +106,7 @@ struct MainDB_LinkedList_Node {
 
     struct MainDB_LinkedList_Node* link = NULL;
 };
+
 
 struct MainDB_LinkedList_Node* Head = NULL;
 struct MainDB_LinkedList_Node* CurrentNode = NULL;
@@ -44,7 +125,7 @@ void insertEnd_v2(//Proprietary Naming Convention for Developers//Function Taken
 
 {
     struct MainDB_LinkedList_Node* CurrentNode = new  MainDB_LinkedList_Node;
-    //CurrentNode = (struct MainDB_LinkedList_Node*)malloc(sizeof(MainDB_LinkedList_Node)); GIVES HUUGE ERROR !
+    //CurrentNode = (struct MainDB_LinkedList_Node*)malloc(sizeof(MainDB_LinkedList_Node)); GIVES HUGE ERROR !
     CurrentNode->item_ID = item_ID;
     CurrentNode->title = title;
     CurrentNode->author = author;
@@ -407,9 +488,29 @@ int main()
                     productSearch_CASE_3(dbFileName);
                     break;
 
-                case 7:
-                    //Repeat
+                case 4:
+                {
+                    categoryFilter_CASE_4(Head);
                     break;
+                }
+
+                case 5:
+                {
+                    updateProduct_CASE_5(Head);
+                    break;
+                }
+
+                case 6:
+                {
+                    sortProduct_CASE_6(Head);
+                    break;
+                }
+
+                case 7:
+                {
+                    deleteProduct_CASE_7(Head);
+                    break;
+                }
 
                 case 0:
                     CPY_MainDB_LinkedList_to_dbFile(Head, dbFileName);
@@ -418,7 +519,7 @@ int main()
                 default:
                     break;
                 }
-                if (choice == 7)
+                if (choice == 8)
                 {
                     break;
                 }
@@ -560,6 +661,7 @@ string read_dbFileName_item_ID()
 
 void productSearch_CASE_3(string fileName) // Combine with Categoryilter
 {
+    CPY_MainDB_LinkedList_to_dbFile(Head, fileName);
     cin.ignore();
     system("CLS");
     string searchString;
@@ -629,25 +731,275 @@ void productSearch_CASE_3(string fileName) // Combine with Categoryilter
             cout << "SORRY! NO MATCH" << endl;
         }
     }
-    cout << "\nEnter any Key to Continue..";
+     cout << "\nEnter any Key to Continue..";
     _getch();
     system("CLS"); //MOVE TO MAIN MENU TO REFACTOR
 }
 
-void categoryFilter()
+void categoryFilter_CASE_4(struct MainDB_LinkedList_Node *head)
 {
+    bool found = false;
+    system("CLS");
+    string categFilter;
+    cout << "Enter Category Filter : ";
+    cin >> categFilter;
+
+
+    struct MainDB_LinkedList_Node* reader = head;
+    Sleep(1450);
+    if (reader == NULL)
+    {
+        std::cout << "LinkedList Empty";
+    }
+    else
+    {
+        while (reader != NULL)
+        {
+            if(reader->category == categFilter)
+            {
+                found = true;
+            cout << "Item ID : " << reader->item_ID << endl;
+            cout << "Book Title : " << reader->title << endl;
+            cout << "Author : " << reader->author << endl;
+            cout << "QTY : " << reader->qty << endl;
+            cout << "Category : " << reader->category << endl;
+            cout << "----------------------------------" << endl;
+            }
+            reader = reader->link;
+        }
+        if(found != true)
+            {
+                cout << "No such Category Found..";
+            }
+            cout<<"\nPress any key to continue..";
+            _getch();
+            system("cls");
+    }
+
 }
 
-void updateProduct()
+void updateProduct_CASE_5(struct MainDB_LinkedList_Node *head)
 {
+    bool found = false;
+    system("CLS");
+    string itemID;
+    cout << "Enter Item ID to update Item : ";
+    cin >> itemID;
+
+
+    struct MainDB_LinkedList_Node* reader = head;
+    Sleep(1450);
+    if (reader == NULL)
+    {
+        std::cout << "LinkedList Empty";
+    }
+    else
+    {
+        while (reader != NULL)
+        {
+            if(reader->item_ID == stoi(itemID))
+            {
+                found = true;
+            cout << "Item ID : " << reader->item_ID << endl;
+            cout << "Book Title : " << reader->title << endl;
+            cout << "Author : " << reader->author << endl;
+            cout << "QTY : " << reader->qty << endl;
+            cout << "Category : " << reader->category << endl;
+            cout << "----------------------------------" << endl;
+
+            cout << "What would you like to change ?" << endl;
+            cout << "[1] Book Title" << endl;
+            cout << "[2] Author" << endl;
+            cout << "[3] QTY" << endl;
+            cout << "[4] Category" << endl;
+
+            int choice;
+            cout << "Choice : ";
+            cin >> choice;
+
+            switch (choice)
+            {
+                case 1:
+                {
+                    string bookTitle;
+                    cout << "New Book Title : ";
+                    cin.ignore();
+                    getline(cin, bookTitle);
+                    reader->title = bookTitle;
+                    //strcpy(reader->title,bookTitle); DID NOT WORK, NEEDS CHAR TO STR CONV
+                    break;
+                }
+
+                case 2:
+                {
+                    string author;
+                    cout << "New Author : ";
+                    cin.ignore();
+                    getline(cin,author);
+                    reader->author = author;
+                    //strcpy(reader->title,bookTitle); DID NOT WORK, NEEDS CHAR TO STR CONV
+                    break;
+                }
+
+                case 3:
+                {
+                    int qty;
+                    cout << "New QTY : ";
+                    cin >> qty;
+                    reader->qty = qty;
+                    //strcpy(reader->title,bookTitle); DID NOT WORK, NEEDS CHAR TO STR CONV
+                    break;
+                }
+
+                case 4:
+                {
+                    string category;
+                    cout << "New Category : ";
+                    cin.ignore();
+                    getline(cin, category);
+                    reader->category = category;
+                    break;
+                }
+
+                default:
+                {
+                    break;
+                }
+            }
+            }
+            reader = reader->link;
+        }
+        if(found != true)
+            {
+                cout << "No such ID Found..";
+            }else
+            {
+                cout << "\nChanges Applied..";
+            }
+            cout<<"\nPress any key to continue..";
+            _getch();
+            system("cls");
+    }
 }
 
-void sortProduct()
+void sortProduct_CASE_6(struct MainDB_LinkedList_Node* head)
 {
+    struct MainDB_LinkedList_Node* reader = head; // can refactor by removing line and initiating as reader instead of head
+    if (reader == NULL)
+    {
+        std::cout << "LinkedList Empty";
+    }
+    else
+    {
+        while (reader != NULL)
+        {
+            //change to passbyValue//change to passbyValue
+            insertEnd_v2_Sort
+            (
+                &Sort_Head, 
+                &Sort_LastNode, 
+                reader->item_ID,
+                reader->title,
+                reader->author,
+                reader->qty,
+                reader->category
+            );
+            reader = reader->link;
+        }
+    }
+    
+    cout << "Sorted Linked List.." << endl;
+    Sort_PrintNode(Sort_Head);
+
+    cout << "\nPress any key to continue..";
+    _getch();
+    system("cls");
 }
 
-void deleteProduct()
+void deleteProduct_CASE_7(struct MainDB_LinkedList_Node* head)
 {
+    system("cls");
+    int itemID;
+    cout << "[Delete] Book ID : ";
+    cin >> itemID;
+    
+    //can use switch case
+    if (Head == NULL)
+    {
+        cout << "List Already Empty, Nothing to Delete.." << endl;
+    }
+    else if(itemID == 1)
+    {
+        if(Head->link == NULL)
+        {
+            free(Head);
+            Head = NULL;
+            item_ID--;
+        }else
+        {
+            struct MainDB_LinkedList_Node* temp = Head;
+            Head = Head->link;
+            free(temp);
+            temp = NULL; //because temp still contains invalid memory location of deleted node earlier using free()
+        
+            item_ID --;
+
+            TempNode = Head;
+            while(TempNode != NULL)
+            {
+                TempNode->item_ID--;
+                TempNode = TempNode->link;
+            }
+        }
+    }
+    else if(itemID == LastNode->item_ID)
+    {
+        struct MainDB_LinkedList_Node* temp1 = Head;
+        struct MainDB_LinkedList_Node* temp2 = Head;
+
+        while(temp1->link != NULL)
+        {
+            temp2 = temp1;
+            temp1 = temp1->link;
+        }
+        temp2->link = NULL;
+        free(temp1);
+        temp1 = NULL;
+
+        item_ID--;
+
+        TempNode = Head;
+            while(TempNode != NULL)
+            {
+                TempNode->item_ID--;
+                TempNode = TempNode->link;
+            }
+    }
+    else
+    {
+        struct MainDB_LinkedList_Node* previous = Head;
+        struct MainDB_LinkedList_Node* current = Head;
+        while(current->item_ID != itemID)
+        {
+            previous = current;
+            current = current->link; 
+        }
+        previous->link = current->link;
+        free(current);
+        current = NULL;
+
+        item_ID--;
+        TempNode = previous;
+            while(TempNode != NULL)
+            {
+                TempNode->item_ID--;
+                TempNode = TempNode->link;
+            }
+    }
+    //add IF Flag for IF no LL
+    cout << "Deleted Succesfully..]";
+    Sleep(1450);
+    system("CLS");
 }
 
 // ::: TRANSACTION MENU :::
