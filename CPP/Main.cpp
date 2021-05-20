@@ -12,6 +12,7 @@ using namespace std;
 
 //Prototypes (commented are added to Class)
 string read_dbFileName_item_ID();
+string read_transFileName_trans_ID();
 //void addProduct_CASE_1(string dbFileName, int item_ID);
 //void displayProducts_CASE_2(string dbFileName);
 void productSearch_CASE_3(string fileName);
@@ -19,6 +20,11 @@ void categoryFilter_CASE_4(struct MainDB_LinkedList_Node *head);
 void updateProduct_CASE_5(struct MainDB_LinkedList_Node *head);
 void sortProduct_CASE_6(struct MainDB_LinkedList_Node* head);
 void deleteProduct_CASE_7(struct MainDB_LinkedList_Node* head);
+
+void addPurchase_CASE_1();
+void viewPurchase_CASE_2(string transFileName);
+void sortPurchase_CASE_3();
+void purchaseDetails_CASE_4();
 
 //Nodes
 
@@ -267,6 +273,174 @@ void CPY_MainDB_LinkedList_to_dbFile(struct MainDB_LinkedList_Node* head, string
         system("CLS");
 }
 
+//TRANSACTION FILE NODE
+struct TransDB_LinkedList_Node{
+    int trans_ID;
+    string title;
+    string author;
+    int qty;
+    string category;
+
+    struct TransDB_LinkedList_Node* link = NULL;
+};
+
+struct TransDB_LinkedList_Node* Trans_Head = NULL;
+struct TransDB_LinkedList_Node* Trans_CurrentNode = NULL;
+struct TransDB_LinkedList_Node* Trans_LastNode = NULL;
+struct TransDB_LinkedList_Node* Trans_TempNode = NULL;
+
+void insertEnd_v2_Trans(//Proprietary Naming Convention for Developers//Function Taken from Templates created by Ifhaam & Allan//PassByReference:D!Value
+    struct TransDB_LinkedList_Node** headPtr,
+    struct TransDB_LinkedList_Node** lastNodePtr,
+    int item_ID,
+    string title,
+    string author,
+    int qty,
+    string category)
+
+{
+    struct TransDB_LinkedList_Node* Trans_CurrentNode = new  TransDB_LinkedList_Node;
+    //CurrentNode = (struct MainDB_LinkedList_Node*)malloc(sizeof(MainDB_LinkedList_Node)); GIVES HUGE ERROR !
+    Trans_CurrentNode->trans_ID = item_ID;
+    Trans_CurrentNode->title = title;
+    Trans_CurrentNode->author = author;
+    Trans_CurrentNode->qty = qty;
+    Trans_CurrentNode->category = category;
+
+    Trans_CurrentNode->link = NULL;
+
+    if (*headPtr == NULL)
+    {
+        *headPtr = Trans_CurrentNode;
+        *lastNodePtr = Trans_CurrentNode;
+    }
+    else
+    {
+        Trans_TempNode = *lastNodePtr;
+        Trans_TempNode->link = Trans_CurrentNode;
+        *lastNodePtr = Trans_CurrentNode;
+    }
+}
+
+void Trans_PrintNode(struct TransDB_LinkedList_Node* head)
+{
+    struct TransDB_LinkedList_Node* reader = head;
+    if (reader == NULL)
+    {
+        std::cout << "LinkedList Empty";
+    }
+    else
+    {
+        //reader = Head;
+        while (reader != NULL)
+        {
+            cout << "Transaction ID : " << reader->trans_ID << endl;
+            cout << "Book Title : " << reader->title << endl;
+            cout << "Author : " << reader->author << endl;
+            cout << "QTY : " << reader->qty << endl;
+            cout << "Category : " << reader->category << endl;
+            cout << "----------------------------------" << endl;
+            reader = reader->link;
+        }
+    }
+}
+
+void CPY_transFile_to_TransDB_LinkedList()
+{
+    system("CLS");
+    ifstream in_transFile;
+    in_transFile.open(("transFile.txt"), std::ios::app); //PRINTING ENTIRE FILE
+    int read_ID, read_QTY;
+    string str_read_ID, read_Title, read_Author, str_read_QTY, read_Category;
+    string line;
+
+
+    int tempID = 1;
+    while (getline(in_transFile, line))
+    {
+
+        stringstream strStream(line);
+        getline(strStream, str_read_ID, ',');
+        getline(strStream, read_Title, ',');
+        getline(strStream, read_Author, ',');
+        getline(strStream, str_read_QTY, ',');
+        getline(strStream, read_Category);
+
+        read_ID = stoi(str_read_ID);
+        read_QTY = stoi(str_read_QTY);
+        tempID = read_ID;
+
+        insertEnd_v2_Trans(
+            &Trans_Head,
+            &Trans_LastNode,
+            read_ID,
+            read_Title,
+            read_Author,
+            read_QTY,
+            read_Category);
+
+    }
+    in_transFile.close();
+    //system("CLS");
+}
+
+void CPY_TransDB_LinkedList_to_transFile(struct TransDB_LinkedList_Node* head, string dbFileName) //pass Head as value head assign to printer //Realised can just use head
+{//IMPORANT !!! CHANGE CODE TO ONLY SAVE WHATS NOT IN THE FILE ALREADY :)D
+    ofstream out_transFile;
+    system("CLS");
+    cout << "Writing LinkedList from RAM to Local Database..." << endl;
+    //out_dbFile.open((dbFileName + ".txt"), std::ios::app);
+    out_transFile.open((dbFileName + ".txt"));
+
+    struct TransDB_LinkedList_Node* printer = head;
+        //can add if statement to verify if changes were brought
+        //reader = Head;
+
+    //vector<string> write_Line;
+
+    while (printer != NULL)
+        {
+            vector<string> write_Line;
+
+            string str_write_ID = to_string(printer->trans_ID);
+            string write_Name = printer->title;
+            string write_Author = printer->author;
+            string str_write_QTY = to_string(printer->qty);
+            /*
+             string str_write_QTY;
+            stringstream ss; // ^ CAN REFACTOR TO 2 LINES USING ABOVE METHOD ^
+            ss << write_QTY;
+            ss >> str_write_QTY;
+            */
+            string write_Category = printer->category;
+
+            write_Line.push_back(str_write_ID);
+            write_Line.push_back(write_Name);
+            write_Line.push_back(write_Author);
+            write_Line.push_back(str_write_QTY);
+            write_Line.push_back(write_Category);
+
+            int count = 1;
+            for (string line : write_Line)
+            {
+                if (count == 5)
+                {
+                out_transFile << line << endl;
+                }
+                else
+                {
+                    out_transFile << line << ",";
+                }
+                count++;
+            }   
+            printer = printer->link;
+        }
+        out_transFile.close();
+        cout<<"\nSaving Transaction File..Done..";
+        Sleep(1450);
+        system("CLS");
+}
+
 //Classes
 class MenuClass
 {
@@ -418,6 +592,8 @@ public:
 //Main method
 
 int item_ID; //GLOBAL
+int trans_ID; //GlOBAL
+
 int main()
 {
     ifstream in_dbFile;
@@ -433,6 +609,23 @@ int main()
 
     conv_str_item_ID_to_item_ID << str_item_ID;
     conv_str_item_ID_to_item_ID >> item_ID;
+
+    //TRANSACTION FILE
+    ifstream in_transFile;
+    ofstream out_transFile;
+    string transFileName;
+    string str_trans_ID;
+
+    stringstream get_readTransFile_getTransID(read_transFileName_trans_ID());
+    getline(get_readTransFile_getTransID, transFileName,',');
+    getline(get_readTransFile_getTransID, str_trans_ID);
+
+    stringstream conv_str_trans_ID_to_trans_ID;
+
+    conv_str_trans_ID_to_trans_ID << str_trans_ID;
+    conv_str_trans_ID_to_trans_ID >> trans_ID;
+
+
 
     CPY_dbFile_to_MainDB_LinkedList();
 
@@ -532,11 +725,24 @@ int main()
                 int choice = mainObj.menuValidation(5, 2);
                 switch (choice)
                 {
-                case 5:
-                    //Repeat
+                case 1:
+                    addPurchase_CASE_1();
                     break;
+
+                case 2:
+                    viewPurchase_CASE_2(transFileName);
+                    break;
+
+                case 3:
+                    sortPurchase_CASE_3();
+                    break;
+
+                case 4:
+                    purchaseDetails_CASE_4();
+                    break;
+
                 case 0:
-                    CPY_MainDB_LinkedList_to_dbFile(Head, dbFileName);
+                    CPY_TransDB_LinkedList_to_transFile(Trans_Head, dbFileName);
                     exit(3);
 
                 default:
@@ -658,6 +864,54 @@ string read_dbFileName_item_ID()
 
     return return_dbFileName_item_ID;
 }
+
+//READ TRANSACTION FILE
+string read_transFileName_trans_ID()
+{
+    string return_transFileName_trans_ID;
+    system("CLS");
+    ofstream out_transFile;
+    ifstream in_transFile;
+
+    boolean isValid;
+    string transFileName;
+    int item_ID = 0;
+
+
+
+        transFileName = "transFile";
+        in_transFile.open((transFileName + ".txt"), std::ios::app);
+    
+
+        string idLine;
+        string str_tempID;
+        int tempID = 0;
+
+        while (getline(in_transFile, idLine))
+        {
+            stringstream getID(idLine); // ::: OVERWRITE getID OBJECT :::
+            getline(getID, str_tempID, ',');
+            stringstream conv; // ::: OVERWRITE conv OBJECT ::: --> IF FAIL : COUNT LINES, CREATE ARRAY OF OBJ
+            conv << str_tempID;
+            conv >> tempID;
+        }
+        item_ID = tempID; //*
+
+    in_transFile.close();
+
+    string str_itemID;
+
+    stringstream conv_item_ID_to_str;
+
+    conv_item_ID_to_str << item_ID;
+    conv_item_ID_to_str >> str_itemID;
+
+    return_transFileName_trans_ID = transFileName + "," + str_itemID;
+
+    return return_transFileName_trans_ID;
+}
+  
+
 
 void productSearch_CASE_3(string fileName) // Combine with Categoryilter
 {
@@ -1004,18 +1258,170 @@ void deleteProduct_CASE_7(struct MainDB_LinkedList_Node* head)
 
 // ::: TRANSACTION MENU :::
 
-void addPurchase()
+void addPurchase_CASE_1()
 {
+    int write_QTY;
+        string write_Name, write_Author, write_Category, temp_str_write_QTY;
+        trans_ID++;
+        cout << "ID : " << item_ID << endl;
+        cin.ignore(); // <-- SUSPECTED CAUSE : _GETCH() FROM LINE:162
+        cout << "Name : ";
+        getline(cin, write_Name);
+        cout << "Author : ";
+        getline(cin, write_Author);
+        cout << "QTY : ";
+        // cin >> write_QTY; //CRASHES ON NON-NUMERIC VALUE ::: FIXING :::
+        while (getline(cin, temp_str_write_QTY))
+        {
+            stringstream getQTY(temp_str_write_QTY);
+            if (getQTY >> write_QTY)
+            {
+                if (getQTY.eof())
+                {
+                    break;
+                }
+            }
+            cout << "NON-NUMERIC INPUT DETECTED, TRY AGAIN...\n";
+            cout << "QTY : ";
+        }
+        cout << "Category : ";
+        //cin.ignore();
+        getline(cin, write_Category);
+
+        
+            insertEnd_v2_Trans(
+            &Trans_Head,
+            &Trans_LastNode,
+            item_ID,
+            write_Name,
+            write_Author,
+            write_QTY,
+            write_Category);
+
+            cout << "\n\nUpdating DATABASE...";
+            Sleep(1450);
+            system("CLS");
+            //return item_ID;
 }
 
-void viewPurchase()
+void viewPurchase_CASE_2(string transFileName)
 {
+    CPY_TransDB_LinkedList_to_transFile(Trans_Head, transFileName);
+    cin.ignore();
+    system("CLS");
+    string searchString;
+    int searchID;
+    bool use_searchID = true;
+    bool matchFound;
+
+    cout << "SEARCH [ID OR Name/Author] : ";
+    getline(cin, searchString);
+
+    stringstream searchStringStream(searchString);
+    if (searchStringStream >> searchID)
+    {
+        if (searchStringStream.eof())
+        {
+            searchStringStream >> searchString;
+        }
+        else
+        {
+            use_searchID = false;
+        }
+    }
+    else
+    {
+        use_searchID = false;
+    }
+
+    if (use_searchID == true)
+    {
+        ifstream in_dbFile;
+        string line;
+        int grabbedID;
+        in_dbFile.open((transFileName + ".txt"), std::ios::app);
+        while (getline(in_dbFile, line))
+        {
+            stringstream pull_itemID(line);
+            string str_itemID;
+            int itemID;
+            getline(pull_itemID, str_itemID, ',');
+            grabbedID = stoi(str_itemID);
+            if (searchID == grabbedID)
+            {
+                matchFound = true;
+                break;
+            }
+            else
+            {
+                matchFound = false;
+            }
+        }
+    }
+    else
+    {
+        cout << "\nSEARCH BOOK_NAME / AUTHOR..." << endl;
+    }
+
+    if (use_searchID)
+    {
+        cout << "SEARCHING BY ID.." << endl;
+        Sleep(500);
+        if (matchFound)
+        {
+            cout << "MATCH FOUND !" << endl;
+        }
+        if (!matchFound)
+        {
+            cout << "SORRY! NO MATCH" << endl;
+        }
+    }
+     cout << "\nEnter any Key to Continue..";
+    _getch();
+    system("CLS"); //MOVE TO MAIN MENU TO REFACTOR
+
 }
 
-void sortPurchase()
-{
+void sortPurchase_CASE_3()
+{/*
+    struct MainDB_LinkedList_Node* reader = head; // can refactor by removing line and initiating as reader instead of head
+    if (reader == NULL)
+    {
+        std::cout << "LinkedList Empty";
+    }
+    else
+    {
+        while (reader != NULL)
+        {
+            //change to passbyValue//change to passbyValue
+            insertEnd_v2_Sort
+            (
+                &Sort_Head, 
+                &Sort_LastNode, 
+                reader->item_ID,
+                reader->title,
+                reader->author,
+                reader->qty,
+                reader->category
+            );
+            reader = reader->link;
+        }
+    }
+    
+    cout << "Sorted Linked List.." << endl;
+    Sort_PrintNode(Sort_Head);
+
+    cout << "\nPress any key to continue..";
+    _getch();
+    system("cls");
+    */
 }
 
-void purchaseDetails()
+void purchaseDetails_CASE_4()
 {
+    system("cls");
+    Trans_PrintNode(Trans_Head);
+    cout << "Press any key to continue..";
+    _getch();
+    system("cls");
 }
