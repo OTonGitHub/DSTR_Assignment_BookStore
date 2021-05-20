@@ -23,7 +23,7 @@ void deleteProduct_CASE_7(struct MainDB_LinkedList_Node* head);
 
 void addPurchase_CASE_1();
 void viewPurchase_CASE_2(string transFileName);
-void sortPurchase_CASE_3();
+void sortPurchase_CASE_3(struct TransDB_LinkedList_Node* head);
 void purchaseDetails_CASE_4();
 
 //Nodes
@@ -457,7 +457,7 @@ private:
         cout << "[6] sortProduct()" << endl; //SORT ON AVAILABLE QTY
         cout << "[7] deleteproduct()" << endl;
         cout << "[8] mainMenu()" << endl;
-        cout << "[0] exit()";
+        cout << "[0] Save Changes & exit()";
     }
 
     void printTransactionMenu()
@@ -468,7 +468,7 @@ private:
         cout << "[3] sortPurchase()" << endl;
         cout << "[4] purchaseDetails()" << endl;
         cout << "[5] mainMenu()" << endl;
-        cout << "[0] exit()";
+        cout << "[0] Save Changes & exit()";
     }
 
 public:
@@ -628,6 +628,7 @@ int main()
 
 
     CPY_dbFile_to_MainDB_LinkedList();
+    CPY_transFile_to_TransDB_LinkedList();
 
     InventoryClass inventoryClassObj(dbFileName, item_ID);
 
@@ -707,6 +708,7 @@ int main()
 
                 case 0:
                     CPY_MainDB_LinkedList_to_dbFile(Head, dbFileName);
+                    CPY_TransDB_LinkedList_to_transFile(Trans_Head, dbFileName);
                     exit(3);
 
                 default:
@@ -734,7 +736,7 @@ int main()
                     break;
 
                 case 3:
-                    sortPurchase_CASE_3();
+                    sortPurchase_CASE_3(Trans_Head);
                     break;
 
                 case 4:
@@ -743,6 +745,7 @@ int main()
 
                 case 0:
                     CPY_TransDB_LinkedList_to_transFile(Trans_Head, dbFileName);
+                    CPY_MainDB_LinkedList_to_dbFile(Head, dbFileName);
                     exit(3);
 
                 default:
@@ -1382,9 +1385,10 @@ void viewPurchase_CASE_2(string transFileName)
 
 }
 
-void sortPurchase_CASE_3()
-{/*
-    struct MainDB_LinkedList_Node* reader = head; // can refactor by removing line and initiating as reader instead of head
+void sortPurchase_CASE_3(struct TransDB_LinkedList_Node* head)//RED RED RED RED RED RED RED RED RED RED FLAG :: CODE RED
+{
+
+    struct TransDB_LinkedList_Node* reader = head; // can refactor by removing line and initiating as reader instead of head
     if (reader == NULL)
     {
         std::cout << "LinkedList Empty";
@@ -1394,11 +1398,11 @@ void sortPurchase_CASE_3()
         while (reader != NULL)
         {
             //change to passbyValue//change to passbyValue
-            insertEnd_v2_Sort
+            insertEnd_v2_Trans
             (
-                &Sort_Head, 
-                &Sort_LastNode, 
-                reader->item_ID,
+                &Trans_Head, 
+                &Trans_LastNode, 
+                reader->trans_ID,
                 reader->title,
                 reader->author,
                 reader->qty,
@@ -1409,12 +1413,12 @@ void sortPurchase_CASE_3()
     }
     
     cout << "Sorted Linked List.." << endl;
-    Sort_PrintNode(Sort_Head);
+    Trans_PrintNode(Trans_Head);
 
     cout << "\nPress any key to continue..";
     _getch();
     system("cls");
-    */
+
 }
 
 void purchaseDetails_CASE_4()
