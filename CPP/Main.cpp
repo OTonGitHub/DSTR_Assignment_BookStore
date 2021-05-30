@@ -198,8 +198,17 @@ void CPY_dbFile_to_MainDB_LinkedList()
         getline(strStream, str_read_QTY, ',');
         getline(strStream, read_Category);
 
-        read_ID = stoi(str_read_ID);
-        read_QTY = stoi(str_read_QTY);
+
+            stringstream conv; // ::: OVERWRITE conv OBJECT ::: --> IF FAIL : COUNT LINES, CREATE ARRAY OF OBJ
+            conv << str_read_ID;
+            conv >> read_ID;
+
+            stringstream conv2; // ::: OVERWRITE conv OBJECT ::: --> IF FAIL : COUNT LINES, CREATE ARRAY OF OBJ
+            conv << str_read_QTY;
+            conv >> read_QTY;
+
+        //read_ID = stoi(str_read_ID);
+        //read_QTY = stoi(str_read_QTY);
         tempID = read_ID;
 
         insertEnd_v2(
@@ -222,7 +231,7 @@ void CPY_MainDB_LinkedList_to_dbFile(struct MainDB_LinkedList_Node* head, string
     system("CLS");
     cout << "Writing LinkedList from RAM to Local Database..." << endl;
     //out_dbFile.open((dbFileName + ".txt"), std::ios::app);
-    out_dbFile.open((dbFileName + ".txt"));
+    out_dbFile.open((dbFileName + ".txt"), std::ios::app);
 
     struct MainDB_LinkedList_Node* printer = head;
         //can add if statement to verify if changes were brought
@@ -533,6 +542,7 @@ public:
 
     int addProduct_CASE_1(string dbFileName, int item_ID)
     {
+        system("CLS");
         int write_QTY;
         string write_Name, write_Author, write_Category, temp_str_write_QTY;
         item_ID++;
@@ -708,7 +718,7 @@ int main()
 
                 case 0:
                     CPY_MainDB_LinkedList_to_dbFile(Head, dbFileName);
-                    CPY_TransDB_LinkedList_to_transFile(Trans_Head, dbFileName);
+                    CPY_TransDB_LinkedList_to_transFile(Trans_Head, "transFile");
                     exit(3);
 
                 default:
@@ -744,7 +754,7 @@ int main()
                     break;
 
                 case 0:
-                    CPY_TransDB_LinkedList_to_transFile(Trans_Head, dbFileName);
+                    CPY_TransDB_LinkedList_to_transFile(Trans_Head, "transFile");
                     CPY_MainDB_LinkedList_to_dbFile(Head, dbFileName);
                     exit(3);
 
@@ -1144,7 +1154,7 @@ void sortProduct_CASE_6(struct MainDB_LinkedList_Node* head)
     struct MainDB_LinkedList_Node* reader = head; // can refactor by removing line and initiating as reader instead of head
     if (reader == NULL)
     {
-        std::cout << "LinkedList Empty";
+        std::cout << "LinkedList Empty"; 
     }
     else
     {
@@ -1165,6 +1175,39 @@ void sortProduct_CASE_6(struct MainDB_LinkedList_Node* head)
         }
     }
     
+    
+    struct MainDB_Sort_LinkedList_Node** h;
+    int i, j, swapped;
+    int count = item_ID - 1;
+
+    for (i = 0; i <= count; i++)
+    {
+        h = &Sort_Head;
+        swapped = 0;
+
+        for(j = 0; j < count - i - 1; j++)
+        {
+            struct MainDB_Sort_LinkedList_Node* p1 = *h;
+            struct MainDB_Sort_LinkedList_Node* p2 = p1->link;
+
+            if (p1->qty > p2->qty)
+            {
+                struct MainDB_Sort_LinkedList_Node* tmp = p2->link;
+                p2->link = p1;
+                p1->link = tmp;
+                *h = p2;
+                
+                swapped = 1;
+            }
+
+            h = &(*h)->link;
+        }
+
+        if (swapped == 0)
+            break;
+    }
+    
+
     cout << "Sorted Linked List.." << endl;
     Sort_PrintNode(Sort_Head);
 
@@ -1309,7 +1352,7 @@ void addPurchase_CASE_1()
 
 void viewPurchase_CASE_2(string transFileName)
 {
-    CPY_TransDB_LinkedList_to_transFile(Trans_Head, transFileName);
+    CPY_TransDB_LinkedList_to_transFile(Trans_Head, "transFile");
     cin.ignore();
     system("CLS");
     string searchString;
